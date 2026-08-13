@@ -26,16 +26,20 @@ plan into analysis-ready data.
 ab-testing-data-platform/
 ├── README.md                          <- you are here
 ├── requirements.txt
-├── docs/                               <- source assignment/business PDFs
+├── templates/                          <- shared PDF documentation build pipeline
+│   ├── style.css                       <- academic-style typesetting (cover, TOC, headers/footers)
+│   └── build_pdf.py                    <- markdown -> styled PDF (pandoc + weasyprint)
+├── docs/                               <- source assignment/business PDFs + rendered documentation PDFs
 ├── assignment1/
-│   ├── 01_business_understanding.md
-│   ├── 02_event_tracking_plan.md
+│   ├── 01_business_understanding.md    <- business case, hypothesis, experimental design, KPI framework
+│   ├── 02_event_tracking_plan.md       <- event schema, governance, validation rules, metric lineage
 │   ├── event_schema.json               <- machine-readable event schema
 │   ├── stepmap.json                    <- per-variant step definitions
 │   ├── data_generator.py               <- synthetic event data generator
 │   ├── generated_data/events.csv       <- generated dataset (~125k events, 6k users)
-│   └── README.md
+│   └── README.md                       <- rubric mapping + quick start
 └── assignment2/
+    ├── 00_documentation.md             <- architecture, design rationale, data quality framework, results
     ├── schema/
     │   ├── 01_raw.sql
     │   ├── 02_staging.sql
@@ -44,7 +48,7 @@ ab-testing-data-platform/
     │   └── 05_data_quality_checks.sql
     ├── build_db.py                     <- ingestion + pipeline orchestrator
     ├── db/                             <- ab_test.db built here (gitignored, regenerate locally)
-    └── README.md
+    └── README.md                       <- rubric mapping + quick start
 ```
 
 ## Quick Start

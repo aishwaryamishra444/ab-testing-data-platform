@@ -1,111 +1,216 @@
 ---
-title: "Event Tracking Plan & Event Schema"
-subtitle: "Onboarding Flow Optimization A/B Test"
+title: "Event Tracking Plan, Schema Design & Data Governance"
+subtitle: "Assignment 1 — Onboarding Flow Optimization A/B Test"
 author: "Aishwarya Mishra"
 date: "August 2026"
 ---
 
-# 1. Design Principles
+## Abstract
 
-1. **One row per event** (long/narrow format) — flexible for any funnel shape,
-   easy to append new event types without a schema migration.
-2. **Every event carries the same envelope fields** so any event can be sliced
-   by test group, platform, user and time without joins.
-3. **Event-specific detail lives in a `properties` JSON blob** rather than
-   dozens of mostly-null columns — kept narrow at the raw layer, flattened out
-   later in staging/warehouse.
-4. Event names are `snake_case`, past-tense, `object_verb` (e.g.
-   `onboarding_step_completed`) for consistency and easy grouping.
+This document specifies the event-level instrumentation required to
+operationalize the KPI framework defined in
+[`01_business_understanding.md`](01_business_understanding.md). It defines
+a schema, a naming taxonomy, per-event validation rules, randomization and
+identity semantics, a versioning strategy, and the explicit lineage from
+raw events to each KPI and guardrail. The schema is implemented in
+machine-readable form as [`event_schema.json`](event_schema.json) and
+[`stepmap.json`](stepmap.json), which are consumed directly — not merely
+referenced — by the data generator, the warehouse build in Assignment 2,
+and (prospectively) the dashboard in Assignment 4, so this document and the
+running system cannot silently drift apart.
 
-# 2. Envelope (present on every event)
+## 1. Design Principles
 
-| Field | Type | Description |
+1. **Long (narrow) format.** One row per event, not one row per user with
+   dozens of event-specific columns. This trades some query-time
+   convenience (addressed by the warehouse layer in Assignment 2) for
+   schema flexibility: a new event type is a new value in `event_name`, not
+   a schema migration.
+2. **Uniform envelope, variable payload.** Every event shares seven
+   identical top-level fields (Section 2) regardless of type; type-specific
+   detail is isolated in a `properties` object. This keeps the raw table
+   narrow and lets generic tooling (deduplication, PII scanning, routing)
+   operate without per-event-type branching.
+3. **Deterministic naming taxonomy.** Every event name follows
+   `object_verb_pasttense` in `snake_case` (e.g., `onboarding_step_completed`,
+   not `CompleteStep` or `step-complete`). Past tense signals that the event
+   is an immutable fact about something that already happened, not a
+   command or a mutable state.
+4. **Idempotent identity.** Every event carries a client-generated
+   `event_id` (UUIDv4) at creation time, independent of when or how many
+   times it is delivered to the backend. This is what allows the staging
+   layer (Assignment 2) to de-duplicate retried deliveries safely.
+5. **No event without an owning user and timestamp.** `user_id` and
+   `event_timestamp` are non-nullable by contract; violations are routed to
+   a quarantine table rather than silently dropped or silently accepted
+   (Assignment 2, Section on Data Quality).
+
+## 2. Envelope Specification
+
+| Field | Type | Nullable | Description |
+|---|---|---|---|
+| `event_id` | string (UUIDv4) | No | Client-generated unique identifier; the basis for deduplication |
+| `user_id` | string | No | Pseudonymous identifier, stable for the user's lifetime in the dataset |
+| `event_name` | string (enum) | No | One of the catalog names in Section 5 |
+| `event_timestamp` | string (ISO-8601, UTC) | No | Client-side event time, not server ingestion time |
+| `test_group` | string (enum: `A`, `B`, `C`) | No | Assigned onboarding arm; set once per user at randomization and copied onto every subsequent event for that user |
+| `platform` | string (enum: `iOS`, `Android`) | No | Device platform |
+| `session_id` | string | Yes | Groups events emitted within one continuous app session |
+| `properties` | object (JSON) | Yes | Event-specific attributes; schema per `event_name` given in Section 5 |
+
+`test_group` and `platform` are denormalized onto every event, not only onto
+a separate assignment record, deliberately: it allows any single event-level
+query (e.g., a step-abandonment funnel) to be sliced by arm without a join
+back to a user dimension, at the cost of redundant storage — a standard
+trade-off for high-cardinality, append-only event streams.
+
+## 3. Identity, Randomization, and Assignment Integrity
+
+- `user_id` is minted at `app_installed` and is treated as immutable for the
+  remainder of the user's event history in this dataset. No identity-merge
+  or cross-device-stitching logic is in scope.
+- Arm assignment happens exactly once, at `onboarding_started` (functionally
+  the user's first app open), via a uniform random draw across `{A, B, C}`,
+  stratified so that iOS and Android are balanced within each arm. Once
+  assigned, `test_group` does not change for that user, including on
+  reinstall (reinstall handling is out of scope for this dataset; each
+  simulated user installs exactly once).
+- **Sample Ratio Mismatch (SRM) as a pre-condition, not an afterthought.**
+  Because every event carries `test_group`, an SRM check —
+  `COUNT(DISTINCT user_id)` per arm compared against the expected 33/33/33
+  split — is a single `GROUP BY` against `mart_kpi_by_group`
+  (Assignment 2) and is treated as a precondition for interpreting *any*
+  other metric in Assignment 4: a broken randomizer invalidates every
+  downstream comparison regardless of how favorable the primary metric
+  looks.
+
+## 4. Data Governance and Privacy Posture
+
+- `user_id` is pseudonymous by construction (a generated identifier, not an
+  email address, device advertising ID, or other directly identifying
+  value), consistent with data-minimization practice for experimentation
+  telemetry.
+- No event in the catalog (Section 5) captures free-text user input beyond
+  `refund_reason` and `exit_reason`, both of which are constrained to a
+  fixed enumeration rather than free text, to avoid inadvertently
+  collecting PII inside an analytics payload.
+- `support_ticket_created` intentionally captures only a boolean
+  relevance flag and a coarse `category` enum, not ticket contents; ticket
+  contents live in the support system of record, not the analytics event
+  stream.
+- Retention policy (for a production deployment, out of scope for this
+  academic dataset): raw event-level data would typically be retained for
+  the duration of the experiment plus one full guardrail observation window
+  (30 days post-experiment-close per Section 3.4 of the business-
+  understanding document), after which only the aggregated data-mart tables
+  would be retained.
+
+## 5. Event Catalog
+
+Each entry below states the triggering condition and its `properties`
+schema. The complete machine-readable form (used directly by
+`data_generator.py`) is [`event_schema.json`](event_schema.json).
+
+### 5.1 Funnel and Onboarding Events
+
+| Event | Triggering Condition | `properties` |
 |---|---|---|
-| `event_id` | UUID (string) | Unique id per event row |
-| `user_id` | string | Anonymous/user identifier, stable per user |
-| `event_name` | string | One of the catalog names in Section 4 |
-| `event_timestamp` | ISO-8601 datetime (UTC) | When the event occurred |
-| `test_group` | enum `A`,`B`,`C` | Assigned onboarding variant |
-| `platform` | enum `iOS`,`Android` | Device platform |
-| `session_id` | string | Groups events within one app session |
-| `properties` | JSON | Event-specific attributes (Section 4) |
+| `app_installed` | App installed on device | `device_platform` |
+| `onboarding_started` | User begins onboarding (arm assignment occurs here) | `total_steps_in_flow` |
+| `onboarding_step_viewed` | Step rendered to the user | `step_number`, `step_name`, `step_bucket` |
+| `onboarding_step_completed` | User successfully submits/advances past a step | `step_number`, `step_name`, `time_on_step_seconds` |
+| `onboarding_step_abandoned` | User exits the app or session mid-step | `step_number`, `step_name`, `exit_reason` (enum: `closed_app`, `backgrounded`, `timeout`, `unknown`) |
+| `onboarding_completed` | User reaches the end of their arm's step sequence | `total_time_seconds`, `steps_completed` |
+| `account_created` | Account/profile persisted | `signup_method` (enum: `email`, `google`, `apple`) |
 
-# 3. Identity & Randomization
+### 5.2 Product Engagement Events
 
-- `user_id` is assigned at `app_installed` and is stable for the user's
-  lifetime in the dataset.
-- Test-group assignment happens once, at `onboarding_started` (first app
-  open), via a uniform random draw across A/B/C (~33% each), stratified so
-  iOS/Android are balanced within each group.
-
-# 4. Event Catalog
-
-## 4.1 Funnel & Onboarding Events
-
-| Event | Fires when | Key `properties` |
+| Event | Triggering Condition | `properties` |
 |---|---|---|
-| `app_installed` | User installs the app | `device_platform` |
-| `onboarding_started` | User begins onboarding | `total_steps_in_flow` |
-| `onboarding_step_viewed` | User sees a step | `step_number`, `step_name`, `step_bucket` (must_have/can_wait/nice_to_have) |
-| `onboarding_step_completed` | User completes a step | `step_number`, `step_name`, `time_on_step_seconds` |
-| `onboarding_step_abandoned` | User exits mid-step | `step_number`, `step_name`, `exit_reason` |
-| `onboarding_completed` | User finishes the whole flow | `total_time_seconds`, `steps_completed` |
-| `account_created` | User creates an account/profile | `signup_method` |
+| `first_lesson_started` | User begins their first lesson (activation trigger) | `lesson_id` |
+| `first_lesson_completed` | User finishes their first lesson (activation success event) | `lesson_id`, `score` |
+| `app_opened_day1` / `app_opened_day7` / `app_opened_day30` | Return visit at the corresponding horizon | `days_since_install` |
+| `notification_permission_shown` | OS-level permission prompt displayed | — |
+| `notification_permission_accepted` / `notification_permission_denied` | User responds to the prompt | — |
 
-## 4.2 Product Engagement Events
+### 5.3 Monetization Events
 
-| Event | Fires when | Key `properties` |
-|---|---|---|
-| `first_lesson_started` | User begins first lesson (activation trigger) | `lesson_id` |
-| `first_lesson_completed` | User finishes first lesson (activation success) | `lesson_id`, `score` |
-| `app_opened_day1` / `app_opened_day7` / `app_opened_day30` | Return visit at that horizon | `days_since_install` |
-| `notification_permission_shown` | Permission prompt shown | — |
-| `notification_permission_accepted` / `notification_permission_denied` | User responds | — |
-
-## 4.3 Monetization Events
-
-| Event | Fires when | Key `properties` |
+| Event | Triggering Condition | `properties` |
 |---|---|---|
 | `trial_started` | Free trial begins | `trial_length_days` |
-| `subscription_purchased` | User converts to paying subscriber | `plan`, `price_usd` |
-| `subscription_cancelled` | User cancels | `days_since_purchase` |
-| `refund_requested` | User requests refund | `days_since_purchase`, `reason` |
+| `subscription_purchased` | User converts to a paying subscriber | `plan` (enum: `monthly`, `annual`), `price_usd` |
+| `subscription_cancelled` | User cancels an active subscription | `days_since_purchase` |
+| `refund_requested` | User requests a refund | `days_since_purchase`, `reason` (enum: `not_as_expected`, `too_expensive`, `found_free_alternative`, `other`) |
 
-## 4.4 Quality & Guardrail Events
+### 5.4 Quality and Guardrail Events
 
-| Event | Fires when | Key `properties` |
+| Event | Triggering Condition | `properties` |
 |---|---|---|
-| `app_crash` / `app_error` | Technical issue | `error_code`, `screen` |
-| `support_ticket_created` | Support ticket logged | `is_onboarding_related` (bool), `category` |
-| `lesson_feedback_submitted` | In-app lesson rating | `relevance_score` (1-5) |
+| `app_crash` / `app_error` | Technical fault during a session | `error_code`, `screen` |
+| `support_ticket_created` | Support ticket logged (may originate in support tooling, not the app) | `is_onboarding_related` (boolean), `category` (enum) |
+| `lesson_feedback_submitted` | User rates lesson relevance | `relevance_score` (integer, 1-5) |
 
-# 5. Step Maps by Variant
+## 6. Per-Event Validation Rules
 
-Encodes the "Must-have / Can-wait / Nice-to-have" bucketing from the business
-document, used both by the generator and by the warehouse to explain *why*
-completion differs between groups.
+Applied at the staging layer (Assignment 2, `schema/02_staging.sql`); listed
+here as part of the schema contract rather than buried in SQL comments:
 
-| Variant | Steps | Composition |
+| Rule | Applies To | Rejection Behavior |
 |---|---|---|
-| A (control) | 13 | All must-have + can-wait + nice-to-have steps |
-| B (medium) | 7 | All must-have + a subset of can-wait steps |
-| C (short) | 5 | Must-have steps only |
+| `event_id`, `user_id`, `event_name`, `event_timestamp` non-null | All events | Routed to `stg_events_rejects`, not dropped |
+| `test_group` in `{A, B, C}` | All events | Routed to `stg_events_rejects` |
+| `platform` in `{iOS, Android}` | All events | Routed to `stg_events_rejects` |
+| `event_id` uniqueness | All events | First-seen row wins; subsequent duplicates dropped at staging |
+| `step_number` present and in `{1..13}` | `onboarding_step_*` events | Enforced by construction in the generator; would be a staging check against a production source |
+| `relevance_score` in `{1..5}` | `lesson_feedback_submitted` | Enforced by construction; production staging would range-check |
 
-Full step list with bucket labels: `stepmap.json`.
+## 7. Schema Versioning and Evolution
 
-# 6. Metric → Event Lineage
+The schema is expressed as data (`event_schema.json`), not as inline logic,
+specifically so it can be versioned independently of the code that produces
+or consumes it. The evolution policy assumed for this project:
 
-| KPI | Computed from |
+- **Additive changes** (a new event name, a new optional `properties` key)
+  are non-breaking and require no coordination beyond updating
+  `event_schema.json`.
+- **Breaking changes** (renaming an event, changing a field's type, making
+  an optional field required) would require a new `event_name` or a
+  `schema_version` envelope field in a production system; this dataset does
+  not exercise that path, since it is generated once against a single fixed
+  schema version.
+- The step-to-bucket-to-arm mapping (`stepmap.json`) is versioned
+  separately from the event schema itself, because it is experiment-design
+  metadata (which steps exist, and which arm sees them) rather than
+  wire-format metadata (what an event looks like on the wire) — conflating
+  the two would make it harder to run a second, differently-designed
+  experiment against the same event schema in the future.
+
+## 8. Metric-to-Event Lineage
+
+Restated here from the business-understanding document, in the direction
+that matters for instrumentation review: for each KPI, the minimal set of
+events that must be reliably captured for the metric to be computable.
+
+| KPI | Required Events |
 |---|---|
-| Onboarding completion rate | `onboarding_started` vs `onboarding_completed` |
-| Activation rate | `onboarding_completed` vs `first_lesson_completed` |
-| Day-1 / Day-7 / Day-30 return rate | `app_opened_day1/7/30` vs `onboarding_started` |
-| Paid conversion rate | `first_lesson_completed` vs `subscription_purchased` |
-| Time to first lesson | `onboarding_started.timestamp` → `first_lesson_started.timestamp` |
-| Refund / cancellation rate | `subscription_purchased` vs `refund_requested`/`subscription_cancelled` |
-| Notification opt-in rate | `notification_permission_shown` vs `_accepted` |
-| Support ticket rate (onboarding) | `support_ticket_created` where `is_onboarding_related` |
+| Onboarding completion rate | `onboarding_started`, `onboarding_completed` |
+| Activation rate | `onboarding_completed`, `first_lesson_completed` |
+| Day-1 / Day-7 / Day-30 return rate | `onboarding_completed` (denominator), `app_opened_day1`/`day7`/`day30` |
+| Paid conversion rate | `first_lesson_completed`, `subscription_purchased` |
+| Time to first lesson | `onboarding_started`, `first_lesson_started` |
+| Lesson relevance (guardrail) | `lesson_feedback_submitted` |
+| Refund / cancellation rate (guardrail) | `subscription_purchased`, `refund_requested`, `subscription_cancelled` |
+| Notification opt-in rate (guardrail) | `notification_permission_shown`, `notification_permission_accepted` |
+| Onboarding support-ticket rate (guardrail) | `onboarding_started`, `support_ticket_created` |
 
-See [`event_schema.json`](event_schema.json) for the machine-readable schema
-and [`stepmap.json`](stepmap.json) for the per-variant step definitions, both
-consumed directly by [`data_generator.py`](data_generator.py).
+Any gap in this table — an event type dropped from instrumentation — is, by
+construction, a gap in the organization's ability to answer the business
+question in Section 1 of the business-understanding document. This table is
+therefore the acceptance criterion for "is the platform instrumented
+correctly," independent of whatever the experiment's eventual result turns
+out to be.
+
+See [`event_schema.json`](event_schema.json) for the machine-readable
+schema, [`stepmap.json`](stepmap.json) for the per-arm step definitions, and
+[`data_generator.py`](data_generator.py) for the synthetic dataset that
+implements this specification end to end.

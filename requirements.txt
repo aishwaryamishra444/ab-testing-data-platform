@@ -1,6 +1,11 @@
-# Standard-library only: csv, json, sqlite3, random, uuid, datetime.
-# Nothing external is required to run data_generator.py or build_db.py.
+# data_generator.py and build_db.py use the standard library only
+# (csv, json, sqlite3, random, uuid, datetime) - nothing to install for
+# those.
 #
+# Needed only to render the PDF documentation via templates/build_pdf.py
+# (requires pandoc as a system binary too - see https://pandoc.org/installing.html):
+weasyprint>=69.0
+
 # Optional, only needed if you extend the project (e.g. pandas-based
 # exploration notebooks, or Assignment 4's dashboard/stats work):
 pandas>=2.0

@@ -1,0 +1,239 @@
+@page {
+    margin: 2.4cm 2cm 2.2cm 2cm;
+    @bottom-center {
+        content: counter(page) " of " counter(pages);
+        font-family: Georgia, serif;
+        font-size: 8.5pt;
+        color: #555;
+    }
+    @top-right {
+        content: "Onboarding A/B Test — Data Engineering Platform";
+        font-family: Georgia, serif;
+        font-size: 7.5pt;
+        color: #888;
+        font-style: italic;
+    }
+}
+
+@page :first {
+    @top-right { content: ""; }
+    @bottom-center { content: ""; }
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: "Georgia", "Times New Roman", serif;
+    font-size: 10.8pt;
+    line-height: 1.5;
+    color: #1a1a1a;
+    text-align: justify;
+    hyphens: auto;
+}
+
+/* ---------- Title block (cover) ---------- */
+header#title-block-header {
+    page-break-after: always;
+    text-align: center;
+    padding-top: 32vh;
+    border: none;
+}
+
+header#title-block-header h1.title {
+    font-size: 26pt;
+    font-weight: 700;
+    margin-bottom: 0.3em;
+    color: #10243e;
+    line-height: 1.25;
+}
+
+header#title-block-header p.subtitle {
+    font-size: 15pt;
+    font-style: italic;
+    color: #3a5a80;
+    margin-top: 0;
+    margin-bottom: 2.2em;
+}
+
+header#title-block-header p.author,
+header#title-block-header p.date {
+    font-size: 12pt;
+    color: #333;
+    margin: 0.25em 0;
+}
+
+header#title-block-header .subtitle-rule {
+    width: 120px;
+    height: 2px;
+    background: #10243e;
+    margin: 1.4em auto;
+}
+
+/* ---------- Table of contents ---------- */
+nav#TOC {
+    page-break-after: always;
+    padding-top: 2em;
+}
+
+nav#TOC > ul > li > a {
+    font-weight: 700;
+}
+
+nav#TOC ul {
+    list-style: none;
+    padding-left: 1.1em;
+}
+
+nav#TOC > ul {
+    padding-left: 0;
+}
+
+nav#TOC a {
+    text-decoration: none;
+    color: #10243e;
+}
+
+nav#TOC::before {
+    content: "Table of Contents";
+    display: block;
+    font-size: 18pt;
+    font-weight: 700;
+    color: #10243e;
+    margin-bottom: 0.8em;
+    font-family: Georgia, serif;
+}
+
+/* ---------- Headings ---------- */
+h1, h2, h3, h4 {
+    font-family: "Georgia", serif;
+    color: #10243e;
+    text-align: left;
+    line-height: 1.3;
+}
+
+h1 {
+    font-size: 17pt;
+    border-bottom: 1.5pt solid #10243e;
+    padding-bottom: 0.2em;
+    margin-top: 1.6em;
+}
+
+h2 {
+    font-size: 13.5pt;
+    margin-top: 1.4em;
+    color: #1c3a5e;
+}
+
+h3 {
+    font-size: 11.5pt;
+    color: #2c4e75;
+    margin-top: 1.1em;
+}
+
+h4 {
+    font-size: 10.8pt;
+    font-style: italic;
+    color: #2c4e75;
+}
+
+p {
+    margin: 0.55em 0;
+}
+
+/* ---------- Tables ---------- */
+table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1em 0 1.3em 0;
+    font-size: 9.3pt;
+    text-align: left;
+}
+
+table caption {
+    caption-side: top;
+    font-style: italic;
+    font-size: 9pt;
+    margin-bottom: 0.4em;
+    color: #444;
+}
+
+th {
+    background: #10243e;
+    color: #ffffff;
+    padding: 5px 8px;
+    font-weight: 700;
+    text-align: left;
+}
+
+td {
+    padding: 4.5px 8px;
+    border-bottom: 0.75pt solid #d7dee6;
+    vertical-align: top;
+}
+
+tr:nth-child(even) td {
+    background: #f4f7fa;
+}
+
+/* ---------- Code ---------- */
+code {
+    font-family: "Menlo", "Consolas", monospace;
+    font-size: 8.8pt;
+    background: #eef1f5;
+    padding: 0.1em 0.3em;
+    border-radius: 3px;
+    color: #0b3d59;
+}
+
+pre {
+    background: #10243e;
+    color: #eef3f8;
+    padding: 0.8em 1em;
+    border-radius: 5px;
+    font-size: 8.6pt;
+    line-height: 1.45;
+    overflow-x: auto;
+    margin: 1em 0;
+}
+
+pre code {
+    background: none;
+    color: inherit;
+    padding: 0;
+}
+
+/* ---------- Misc ---------- */
+blockquote {
+    border-left: 3px solid #3a5a80;
+    margin: 1em 0;
+    padding: 0.2em 1em;
+    color: #444;
+    font-style: italic;
+    background: #f4f7fa;
+}
+
+a {
+    color: #1c5fa8;
+}
+
+strong {
+    color: #10243e;
+}
+
+hr {
+    border: none;
+    border-top: 1px solid #c9d2db;
+    margin: 1.6em 0;
+}
+
+ul, ol {
+    margin: 0.5em 0;
+    padding-left: 1.4em;
+}
+
+li {
+    margin: 0.2em 0;
+}

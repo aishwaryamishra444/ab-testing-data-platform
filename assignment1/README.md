@@ -36,6 +36,19 @@ problem), and the guardrails show real, measurable trade-offs for the
 shortest flow (C) — exactly the tension the experiment is designed to surface
 in Assignment 4's analysis.
 
+## Rendering the PDF
+
+The full documentation (business understanding + event tracking plan) is
+built into a single styled PDF via the shared pipeline in `../templates/`:
+
+```bash
+python ../templates/build_pdf.py \
+    --md 01_business_understanding.md 02_event_tracking_plan.md \
+    --title "Assignment 1: Business Understanding, Event Design & Data Generation" \
+    --subtitle "Onboarding Flow Optimization A/B Test" \
+    --out ../docs/Assignment1_Documentation.pdf
+```
+
 ## Full pipeline
 
 This assignment is step 1 of 4. See the [repo root README](../README.md) for
