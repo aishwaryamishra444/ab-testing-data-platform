@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 1010" width="980" height="1010" font-family="Georgia, 'Times New Roman', serif">
+<defs>
+  <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#10243e"/>
+  </marker>
+</defs>
+<rect x="0" y="0" width="980" height="1010" fill="#ffffff"/>
+<text x="490.0" y="42" text-anchor="middle" font-size="20" font-weight="700" fill="#10243e">Data Architecture: Event Stream to Analysis-Ready Marts</text>
+<text x="490.0" y="64" text-anchor="middle" font-size="11.5" fill="#6b7685" font-style="italic">Onboarding Flow Optimization A/B Test &#8212; Assignments 1 &amp; 2</text>
+<rect x="60" y="92" width="860" height="90" rx="10" fill="#eef3f8" stroke="#c9d9ea" stroke-width="1.5"/>
+<text x="76" y="118" font-size="15" font-weight="700" fill="#10243e" letter-spacing="0.5">SOURCE  —  Client / Simulated Event Stream (Assignment 1)</text>
+<rect x="100" y="132" width="240" height="40" rx="6" fill="#3a5a80"/>
+<text x="220.0" y="145.0" text-anchor="middle" font-size="12.5" font-weight="700" fill="#ffffff">Mobile App SDK</text>
+<text x="220.0" y="160.0" text-anchor="middle" font-size="9.5" fill="#ffffff" opacity="0.85">(production, out of scope)</text>
+<rect x="380" y="132" width="260" height="40" rx="6" fill="#10243e"/>
+<text x="510.0" y="145.0" text-anchor="middle" font-size="12.5" font-weight="700" fill="#ffffff">data_generator.py</text>
+<text x="510.0" y="160.0" text-anchor="middle" font-size="9.5" fill="#ffffff" opacity="0.85">6,000 users -&gt; ~125k events</text>
+<rect x="680" y="132" width="250" height="40" rx="6" fill="#3a5a80"/>
+<text x="805.0" y="145.0" text-anchor="middle" font-size="9.8" font-weight="700" fill="#ffffff">event_schema.json + stepmap.json</text>
+<text x="805.0" y="160.0" text-anchor="middle" font-size="8.8" fill="#ffffff" opacity="0.85">schema + step design</text>
+<line x1="490.0" y1="182" x2="490.0" y2="216" stroke="#10243e" stroke-width="2.2" marker-end="url(#arrow)"/>
+<rect x="60" y="216" width="860" height="110" rx="10" fill="#eef3f8" stroke="#c9d9ea" stroke-width="1.5"/>
+<text x="76" y="242" font-size="15" font-weight="700" fill="#10243e" letter-spacing="0.5">RAW  —  schema/01_raw.sql</text>
+<rect x="100" y="262" width="300" height="46" rx="6" fill="#10243e"/>
+<text x="250.0" y="271.0" text-anchor="middle" font-size="12.5" font-weight="700" fill="#ffffff">raw_events</text>
+<text x="250.0" y="286.0" text-anchor="middle" font-size="8.8" fill="#ffffff" opacity="0.85">column-for-column CSV mirror</text>
+<text x="250.0" y="299.0" text-anchor="middle" font-size="8.8" fill="#ffffff" opacity="0.85">no casting, no filtering</text>
+<text x="250" y="316" text-anchor="middle" font-size="9" fill="#6b7685" font-style="italic" font-weight="400">grain: 1 row per delivered event</text>
+<line x1="490.0" y1="326" x2="490.0" y2="360" stroke="#10243e" stroke-width="2.2" marker-end="url(#arrow)"/>
+<text x="660.0" y="343" text-anchor="middle" font-size="9.5" fill="#6b7685" font-style="italic" font-weight="400">validate · deduplicate(event_id) · json_extract flatten</text>
+<rect x="60" y="360" width="860" height="110" rx="10" fill="#eef3f8" stroke="#c9d9ea" stroke-width="1.5"/>
+<text x="76" y="386" font-size="15" font-weight="700" fill="#10243e" letter-spacing="0.5">STAGING  —  schema/02_staging.sql</text>
+<rect x="100" y="406" width="260" height="46" rx="6" fill="#10243e"/>
+<text x="230.0" y="422.0" text-anchor="middle" font-size="12.5" font-weight="700" fill="#ffffff">stg_events</text>
+<text x="230.0" y="437.0" text-anchor="middle" font-size="9.5" fill="#ffffff" opacity="0.85">typed, deduplicated, validated</text>
+<rect x="400" y="406" width="260" height="46" rx="6" fill="#7a3b3b"/>
+<text x="530.0" y="422.0" text-anchor="middle" font-size="12.5" font-weight="700" fill="#ffffff">stg_events_rejects</text>
+<text x="530.0" y="437.0" text-anchor="middle" font-size="9.5" fill="#ffffff" opacity="0.85">quarantined invalid rows</text>
+<line x1="230" y1="470" x2="230" y2="504" stroke="#10243e" stroke-width="2.2" marker-end="url(#arrow)"/>
+<text x="450" y="487" text-anchor="middle" font-size="9.5" fill="#6b7685" font-style="italic" font-weight="400">dimensional modelling (star schema)</text>
+<rect x="60" y="504" width="860" height="190" rx="10" fill="#eef3f8" stroke="#c9d9ea" stroke-width="1.5"/>
+<text x="76" y="530" font-size="15" font-weight="700" fill="#10243e" letter-spacing="0.5">WAREHOUSE  —  schema/03_warehouse.sql  (star schema)</text>
+<rect x="360" y="604" width="300" height="60" rx="6" fill="#10243e"/>
+<text x="510.0" y="627.0" text-anchor="middle" font-size="13" font-weight="700" fill="#ffffff">fact_user_funnel</text>
+<text x="510.0" y="642.0" text-anchor="middle" font-size="9.5" fill="#ffffff" opacity="0.85">grain: 1 row per user  —  primary analytical fact</text>
+<rect x="100" y="550" width="170" height="44" rx="6" fill="#3a5a80"/>
+<text x="185.0" y="572.0" text-anchor="middle" font-size="11.5" font-weight="700" fill="#ffffff">dim_user</text>
+<rect x="100" y="626" width="170" height="44" rx="6" fill="#3a5a80"/>
+<text x="185.0" y="648.0" text-anchor="middle" font-size="11.5" font-weight="700" fill="#ffffff">dim_date</text>
+<rect x="760" y="550" width="170" height="44" rx="6" fill="#3a5a80"/>
+<text x="845.0" y="572.0" text-anchor="middle" font-size="11.5" font-weight="700" fill="#ffffff">dim_step</text>
+<line x1="270" y1="572" x2="360" y2="616" stroke="#3a5a80" stroke-width="1.6" marker-end="url(#arrow)"/>
+<line x1="270" y1="648" x2="360" y2="652" stroke="#3a5a80" stroke-width="1.6" marker-end="url(#arrow)"/>
+<line x1="760" y1="572" x2="660" y2="624" stroke="#3a5a80" stroke-width="1.6" marker-end="url(#arrow)"/>
+<rect x="760" y="626" width="170" height="44" rx="6" fill="#10243e"/>
+<text x="845.0" y="641.0" text-anchor="middle" font-size="8.3" font-weight="700" fill="#ffffff">fact_onboarding_step_events</text>
+<text x="845.0" y="656.0" text-anchor="middle" font-size="7.8" fill="#ffffff" opacity="0.85">grain: 1 row / step event</text>
+<line x1="845" y1="670" x2="845" y2="692" stroke="#10243e" stroke-width="1.6" marker-end="url(#arrow)" stroke-dasharray="4,3"/>
+<line x1="490.0" y1="694" x2="490.0" y2="728" stroke="#10243e" stroke-width="2.2" marker-end="url(#arrow)"/>
+<text x="680.0" y="711" text-anchor="middle" font-size="9.5" fill="#6b7685" font-style="italic" font-weight="400">GROUP BY test_group  /  arm x step  /  date x arm</text>
+<rect x="60" y="728" width="860" height="110" rx="10" fill="#eef3f8" stroke="#c9d9ea" stroke-width="1.5"/>
+<text x="76" y="754" font-size="15" font-weight="700" fill="#10243e" letter-spacing="0.5">DATA MART  —  schema/04_datamart.sql  (pre-aggregated, dashboard-ready)</text>
+<rect x="100.0" y="774" width="180.0" height="46" rx="6" fill="#10243e"/>
+<text x="190.0" y="790.0" text-anchor="middle" font-size="9.3" font-weight="700" fill="#ffffff">mart_kpi_by_group</text>
+<text x="190.0" y="805.0" text-anchor="middle" font-size="8.2" fill="#ffffff" opacity="0.85">1 row / arm</text>
+<rect x="300.0" y="774" width="180.0" height="46" rx="6" fill="#10243e"/>
+<text x="390.0" y="790.0" text-anchor="middle" font-size="9.3" font-weight="700" fill="#ffffff">mart_guardrails_by_group</text>
+<text x="390.0" y="805.0" text-anchor="middle" font-size="8.2" fill="#ffffff" opacity="0.85">1 row / arm</text>
+<rect x="500.0" y="774" width="180.0" height="46" rx="6" fill="#10243e"/>
+<text x="590.0" y="790.0" text-anchor="middle" font-size="9.3" font-weight="700" fill="#ffffff">mart_step_dropoff</text>
+<text x="590.0" y="805.0" text-anchor="middle" font-size="8.2" fill="#ffffff" opacity="0.85">1 row / arm x step</text>
+<rect x="700.0" y="774" width="180.0" height="46" rx="6" fill="#10243e"/>
+<text x="790.0" y="790.0" text-anchor="middle" font-size="9.3" font-weight="700" fill="#ffffff">mart_daily_funnel</text>
+<text x="790.0" y="805.0" text-anchor="middle" font-size="8.2" fill="#ffffff" opacity="0.85">1 row / date x arm</text>
+<line x1="490.0" y1="838" x2="490.0" y2="872" stroke="#10243e" stroke-width="2.2" marker-end="url(#arrow)"/>
+<rect x="60" y="872" width="860" height="90" rx="10" fill="#e8edf3" stroke="#c9d9ea" stroke-width="1.5"/>
+<text x="76" y="898" font-size="15" font-weight="700" fill="#10243e" letter-spacing="0.5">CONSUMERS  —  Assignments 3 &amp; 4 (prospective)</text>
+<rect x="120" y="912" width="260" height="40" rx="6" fill="#6b7685"/>
+<text x="250.0" y="925.0" text-anchor="middle" font-size="12.5" font-weight="700" fill="#ffffff">Orchestration + Monitoring</text>
+<text x="250.0" y="940.0" text-anchor="middle" font-size="9.5" fill="#ffffff" opacity="0.85">scheduled rebuild, logging, alerts</text>
+<rect x="420" y="912" width="260" height="40" rx="6" fill="#6b7685"/>
+<text x="550.0" y="925.0" text-anchor="middle" font-size="12.5" font-weight="700" fill="#ffffff">Dashboard</text>
+<text x="550.0" y="940.0" text-anchor="middle" font-size="9.5" fill="#ffffff" opacity="0.85">KPI + guardrail visualization</text>
+<rect x="720" y="912" width="220" height="40" rx="6" fill="#6b7685"/>
+<text x="830.0" y="925.0" text-anchor="middle" font-size="12.5" font-weight="700" fill="#ffffff">Statistical Test Suite</text>
+<text x="830.0" y="940.0" text-anchor="middle" font-size="9.5" fill="#ffffff" opacity="0.85">z-test, SRM check</text>
+</svg>

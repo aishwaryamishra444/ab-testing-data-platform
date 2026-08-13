@@ -1,8 +1,7 @@
 ---
 title: "Data Ingestion & Data Warehouse Modelling"
 subtitle: "Assignment 2 — Onboarding Flow Optimization A/B Test"
-author: "Aishwarya Mishra"
-date: "August 2026"
+author: "Aishwarya Mishra | USN 2648610 | MSc Computational Statistics & Applied AI, Christ University"
 ---
 
 ## Abstract
@@ -48,6 +47,11 @@ fact_user_funnel                        WAREHOUSE
 mart_kpi_by_group, mart_guardrails_by_group,
 mart_step_dropoff, mart_daily_funnel    DATA MART
 ```
+
+![Data architecture: event stream to analysis-ready marts](../diagrams/data_architecture.svg)
+
+*Figure 1. Full pipeline, source through prospective consumers. Every layer
+boundary corresponds to exactly one `schema/*.sql` file (Section 3).*
 
 ### 2.2 Rationale for Layering
 
@@ -161,6 +165,14 @@ idioms. This pivot is the single point in the pipeline where "did this user
 do X" becomes a queryable column rather than a row that must be searched
 for; every mart table and every future dashboard query builds on this fact
 rather than re-deriving it.
+
+![Warehouse star schema entity-relationship diagram](../diagrams/star_schema_erd.svg)
+
+*Figure 2. The warehouse's dimensional model. `fact_user_funnel` is the
+primary fact (grain: one row per user); `fact_onboarding_step_events` is a
+secondary, finer-grained fact sharing the same `user_id`/`test_group` keys,
+retained separately because step-level drop-off analysis genuinely needs
+event-level granularity that the summary fact does not carry.*
 
 **Indexing strategy.** `dim_user.user_id` carries a unique index (it is the
 fact table's join key); `fact_user_funnel.test_group` carries a non-unique

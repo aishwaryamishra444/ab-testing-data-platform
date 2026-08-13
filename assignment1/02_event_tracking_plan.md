@@ -1,8 +1,7 @@
 ---
 title: "Event Tracking Plan, Schema Design & Data Governance"
 subtitle: "Assignment 1 — Onboarding Flow Optimization A/B Test"
-author: "Aishwarya Mishra"
-date: "August 2026"
+author: "Aishwarya Mishra | USN 2648610 | MSc Computational Statistics & Applied AI, Christ University"
 ---
 
 ## Abstract

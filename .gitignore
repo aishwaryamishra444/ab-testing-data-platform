@@ -10,5 +10,8 @@ __pycache__/
 .venv/
 venv/
 
+# Transient temp files created by templates/build_pdf.py during PDF builds
+.*.pdfbuild.md
+
 # OS
 .DS_Store

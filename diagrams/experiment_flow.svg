@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 640" width="980" height="640" font-family="Georgia, 'Times New Roman', serif">
+<defs>
+  <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#10243e"/>
+  </marker>
+</defs>
+<rect x="0" y="0" width="980" height="640" fill="#ffffff"/>
+<text x="490.0" y="36" text-anchor="middle" font-size="19" font-weight="700" fill="#10243e">Experiment Flow: Randomization to Outcome</text>
+<text x="490.0" y="57" text-anchor="middle" font-size="11" fill="#6b7685" font-style="italic">User journey across the three onboarding arms (event names shown are those actually emitted)</text>
+<rect x="380.0" y="78" width="220" height="44" rx="6" fill="#10243e"/>
+<text x="490.0" y="93.0" text-anchor="middle" font-size="12.5" font-weight="700" fill="#ffffff">app_installed</text>
+<text x="490.0" y="108.0" text-anchor="middle" font-size="9.5" fill="#ffffff" opacity="0.85">user_id minted</text>
+<line x1="490.0" y1="122" x2="490.0" y2="158" stroke="#10243e" stroke-width="2.2" marker-end="url(#arrow)"/>
+<rect x="350.0" y="158" width="280" height="44" rx="6" fill="#10243e"/>
+<text x="490.0" y="173.0" text-anchor="middle" font-size="12.5" font-weight="700" fill="#ffffff">onboarding_started</text>
+<text x="490.0" y="188.0" text-anchor="middle" font-size="8.5" fill="#ffffff" opacity="0.85">arm randomized: A / B / C (~33% each)</text>
+<line x1="490.0" y1="246" x2="170.0" y2="292" stroke="#10243e" stroke-width="2.2" marker-end="url(#arrow)"/>
+<line x1="490.0" y1="246" x2="490.0" y2="292" stroke="#10243e" stroke-width="2.2" marker-end="url(#arrow)"/>
+<line x1="490.0" y1="246" x2="810.0" y2="292" stroke="#10243e" stroke-width="2.2" marker-end="url(#arrow)"/>
+<rect x="60.0" y="292" width="220" height="44" rx="6" fill="#7a3b3b"/>
+<text x="170.0" y="307.0" text-anchor="middle" font-size="12.5" font-weight="700" fill="#ffffff">Arm A — Control</text>
+<text x="170.0" y="322.0" text-anchor="middle" font-size="9.5" fill="#ffffff" opacity="0.85">13 steps</text>
+<rect x="380.0" y="292" width="220" height="44" rx="6" fill="#3a5a80"/>
+<text x="490.0" y="307.0" text-anchor="middle" font-size="12.5" font-weight="700" fill="#ffffff">Arm B — Medium</text>
+<text x="490.0" y="322.0" text-anchor="middle" font-size="9.5" fill="#ffffff" opacity="0.85">7 steps</text>
+<rect x="700.0" y="292" width="220" height="44" rx="6" fill="#10243e"/>
+<text x="810.0" y="307.0" text-anchor="middle" font-size="12.5" font-weight="700" fill="#ffffff">Arm C — Short</text>
+<text x="810.0" y="322.0" text-anchor="middle" font-size="9.5" fill="#ffffff" opacity="0.85">5 steps</text>
+<text x="490.0" y="366" text-anchor="middle" font-size="9.5" fill="#6b7685" font-style="italic" font-weight="400">onboarding_step_viewed  →  _completed  |  _abandoned (exits funnel)</text>
+<line x1="170.0" y1="336" x2="170.0" y2="380" stroke="#10243e" stroke-width="2.2" marker-end="url(#arrow)"/>
+<line x1="490.0" y1="336" x2="490.0" y2="380" stroke="#10243e" stroke-width="2.2" marker-end="url(#arrow)"/>
+<line x1="810.0" y1="336" x2="810.0" y2="380" stroke="#10243e" stroke-width="2.2" marker-end="url(#arrow)"/>
+<line x1="170.0" y1="386" x2="170.0" y2="416" stroke="#10243e" stroke-width="2.2" marker-end="url(#arrow)"/>
+<rect x="60.0" y="416" width="220" height="40" rx="6" fill="#7a3b3b"/>
+<text x="170.0" y="436.0" text-anchor="middle" font-size="10.5" font-weight="700" fill="#ffffff">onboarding_completed</text>
+<line x1="490.0" y1="386" x2="490.0" y2="416" stroke="#10243e" stroke-width="2.2" marker-end="url(#arrow)"/>
+<rect x="380.0" y="416" width="220" height="40" rx="6" fill="#3a5a80"/>
+<text x="490.0" y="436.0" text-anchor="middle" font-size="10.5" font-weight="700" fill="#ffffff">onboarding_completed</text>
+<line x1="810.0" y1="386" x2="810.0" y2="416" stroke="#10243e" stroke-width="2.2" marker-end="url(#arrow)"/>
+<rect x="700.0" y="416" width="220" height="40" rx="6" fill="#10243e"/>
+<text x="810.0" y="436.0" text-anchor="middle" font-size="10.5" font-weight="700" fill="#ffffff">onboarding_completed</text>
+<line x1="170.0" y1="456" x2="450.0" y2="482" stroke="#6b7685" stroke-width="1.4"/>
+<line x1="490.0" y1="456" x2="490.0" y2="482" stroke="#6b7685" stroke-width="1.4" marker-end="url(#arrow)"/>
+<line x1="810.0" y1="456" x2="530.0" y2="482" stroke="#6b7685" stroke-width="1.4"/>
+<text x="490.0" y="476" text-anchor="middle" font-size="9" fill="#6b7685" font-style="italic" font-weight="400">funnel outcomes converge for downstream analysis</text>
+<rect x="60.0" y="490" width="260" height="46" rx="6" fill="#10243e"/>
+<text x="190.0" y="506.0" text-anchor="middle" font-size="12.5" font-weight="700" fill="#ffffff">first_lesson_completed</text>
+<text x="190.0" y="521.0" text-anchor="middle" font-size="9" fill="#ffffff" opacity="0.85">activation</text>
+<rect x="360.0" y="490" width="260" height="46" rx="6" fill="#10243e"/>
+<text x="490.0" y="506.0" text-anchor="middle" font-size="12.5" font-weight="700" fill="#ffffff">app_opened_day1/7/30</text>
+<text x="490.0" y="521.0" text-anchor="middle" font-size="9" fill="#ffffff" opacity="0.85">retention</text>
+<line x1="320.0" y1="513" x2="360.0" y2="513" stroke="#10243e" stroke-width="2.2" marker-end="url(#arrow)"/>
+<rect x="660.0" y="490" width="260" height="46" rx="6" fill="#10243e"/>
+<text x="790.0" y="506.0" text-anchor="middle" font-size="12.5" font-weight="700" fill="#ffffff">subscription_purchased</text>
+<text x="790.0" y="521.0" text-anchor="middle" font-size="9" fill="#ffffff" opacity="0.85">paid conversion</text>
+<line x1="620.0" y1="513" x2="660.0" y2="513" stroke="#10243e" stroke-width="2.2" marker-end="url(#arrow)"/>
+<text x="490.0" y="570" text-anchor="middle" font-size="9.5" fill="#6b7685" font-style="italic" font-weight="400">Guardrails (lesson relevance, refund rate, support tickets, notification opt-in) are measured</text>
+<text x="490.0" y="586" text-anchor="middle" font-size="9.5" fill="#6b7685" font-style="italic" font-weight="400">across every stage above and reported per arm — see 01_business_understanding.md Section 4.3</text>
+</svg>

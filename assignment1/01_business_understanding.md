@@ -1,8 +1,7 @@
 ---
 title: "Business Understanding, Experimental Design & KPI Framework"
 subtitle: "Assignment 1 — Onboarding Flow Optimization A/B Test"
-author: "Aishwarya Mishra"
-date: "August 2026"
+author: "Aishwarya Mishra | USN 2648610 | MSc Computational Statistics & Applied AI, Christ University"
 ---
 
 ## Abstract
@@ -121,6 +120,13 @@ between arms are attributable to sampling variation.
 | A | Control | 13 (unchanged) | Establishes the observational baseline; no product change |
 | B | Medium | 7 | Tests a moderate reduction, retaining most "can-wait" steps |
 | C | Short | 5 | Tests an aggressive reduction, retaining only "must-have" steps |
+
+![Experiment flow: randomization to outcome](../diagrams/experiment_flow.svg)
+
+*Figure 1. Every event named above is emitted verbatim by the instrumentation
+in the event tracking plan (Section 5); the three arms diverge only in step
+count immediately after randomization and converge again into a shared
+measurement path.*
 
 ### 3.3 Step Classification (Confound Control)
 

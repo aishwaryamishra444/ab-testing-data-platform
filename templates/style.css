@@ -219,6 +219,17 @@ a {
     color: #1c5fa8;
 }
 
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 1em auto;
+}
+
+figcaption, p:has(> img) + p em {
+    text-align: center;
+}
+
 strong {
     color: #10243e;
 }

@@ -1,5 +1,7 @@
 # A/B Testing Data Platform — Onboarding Flow Optimization
 
+**Christ University | MSc Computational Statistics & Applied AI**
+**Aishwarya Mishra | USN 2648610**
 **Course:** Data Engineering Weekly Assignments
 **Business case:** [`Onboarding_AB_Test_Experiment_Plan.pdf`](docs/Onboarding_AB_Test_Experiment_Plan.pdf) — a
 3-way A/B test (13-step vs 7-step vs 5-step onboarding) for a B2C
@@ -92,3 +94,25 @@ platform that:
 See [`assignment1/README.md`](assignment1/README.md) and
 [`assignment2/README.md`](assignment2/README.md) for the detailed writeups
 and rubric mapping for each piece.
+
+## Data Architecture — How Data Moves Through This Project
+
+![Data architecture: event stream to analysis-ready marts](diagrams/data_architecture.svg)
+
+Events are captured in a long, append-only format (Assignment 1), then move
+through four layers (Assignment 2): **Raw** (unmodified landing) →
+**Staging** (validated, deduplicated, typed) → **Warehouse** (dimensional
+star schema — see the ERD below) → **Data Mart** (pre-aggregated,
+dashboard-ready tables). Each arrow above corresponds to a `schema/*.sql`
+file that performs exactly that transformation; nothing in this pipeline is
+implicit.
+
+![Warehouse star schema entity-relationship diagram](diagrams/star_schema_erd.svg)
+
+![Experiment flow: randomization to outcome](diagrams/experiment_flow.svg)
+
+Full rationale for each design decision (why this layering, why a star
+schema, why this grain) is in
+[`assignment2/00_documentation.md`](assignment2/00_documentation.md).
+Diagram source: [`diagrams/build_diagrams.py`](diagrams/build_diagrams.py)
+(regenerate with `python diagrams/build_diagrams.py`).
