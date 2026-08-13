@@ -1,0 +1,14 @@
+# Generated database (regenerate with assignment2/build_db.py)
+assignment2/db/*.db
+assignment2/db/*.db-journal
+assignment2/db/*.db-wal
+assignment2/db/*.db-shm
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# OS
+.DS_Store

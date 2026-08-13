@@ -1,0 +1,38 @@
+{
+  "envelope": {
+    "event_id": "string (uuid4)",
+    "user_id": "string",
+    "event_name": "string (enum, see event_catalog)",
+    "event_timestamp": "string (ISO-8601 UTC)",
+    "test_group": "string (enum: A, B, C)",
+    "platform": "string (enum: iOS, Android)",
+    "session_id": "string",
+    "properties": "object (JSON, event-specific, see event_catalog)"
+  },
+  "event_catalog": {
+    "app_installed": ["device_platform"],
+    "onboarding_started": ["total_steps_in_flow"],
+    "onboarding_step_viewed": ["step_number", "step_name", "step_bucket"],
+    "onboarding_step_completed": ["step_number", "step_name", "time_on_step_seconds"],
+    "onboarding_step_abandoned": ["step_number", "step_name", "exit_reason"],
+    "onboarding_completed": ["total_time_seconds", "steps_completed"],
+    "account_created": ["signup_method"],
+    "first_lesson_started": ["lesson_id"],
+    "first_lesson_completed": ["lesson_id", "score"],
+    "app_opened_day1": ["days_since_install"],
+    "app_opened_day7": ["days_since_install"],
+    "app_opened_day30": ["days_since_install"],
+    "notification_permission_shown": [],
+    "notification_permission_accepted": [],
+    "notification_permission_denied": [],
+    "trial_started": ["trial_length_days"],
+    "subscription_purchased": ["plan", "price_usd"],
+    "subscription_cancelled": ["days_since_purchase"],
+    "refund_requested": ["days_since_purchase", "reason"],
+    "app_crash": ["error_code", "screen"],
+    "app_error": ["error_code", "screen"],
+    "support_ticket_created": ["is_onboarding_related", "category"],
+    "lesson_feedback_submitted": ["relevance_score"]
+  },
+  "required_envelope_fields": ["event_id", "user_id", "event_name", "event_timestamp", "test_group", "platform"]
+}

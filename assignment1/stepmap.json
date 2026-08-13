@@ -1,0 +1,45 @@
+{
+  "all_steps_master_list": [
+    {"step_number": 1,  "step_name": "welcome_screen",                 "bucket": "nice_to_have", "base_abandon_rate": 0.03},
+    {"step_number": 2,  "step_name": "select_learning_goal",           "bucket": "can_wait",     "base_abandon_rate": 0.04},
+    {"step_number": 3,  "step_name": "select_native_language",         "bucket": "must_have",    "base_abandon_rate": 0.02},
+    {"step_number": 4,  "step_name": "account_creation_email",         "bucket": "must_have",    "base_abandon_rate": 0.06},
+    {"step_number": 5,  "step_name": "account_creation_password",      "bucket": "must_have",    "base_abandon_rate": 0.05},
+    {"step_number": 6,  "step_name": "level_assessment_intro",         "bucket": "nice_to_have", "base_abandon_rate": 0.03},
+    {"step_number": 7,  "step_name": "level_assessment_quiz",          "bucket": "must_have",    "base_abandon_rate": 0.08},
+    {"step_number": 8,  "step_name": "personalization_interests",      "bucket": "can_wait",     "base_abandon_rate": 0.05},
+    {"step_number": 9,  "step_name": "personalization_schedule",       "bucket": "can_wait",     "base_abandon_rate": 0.05},
+    {"step_number": 10, "step_name": "notification_permission",        "bucket": "can_wait",     "base_abandon_rate": 0.06},
+    {"step_number": 11, "step_name": "referral_source_survey",         "bucket": "nice_to_have", "base_abandon_rate": 0.04},
+    {"step_number": 12, "step_name": "tutorial_walkthrough",           "bucket": "nice_to_have", "base_abandon_rate": 0.04},
+    {"step_number": 13, "step_name": "terms_and_privacy_confirmation", "bucket": "must_have",    "base_abandon_rate": 0.03}
+  ],
+  "variants": {
+    "A": {
+      "label": "control_13_steps",
+      "step_names": [
+        "welcome_screen", "select_learning_goal", "select_native_language",
+        "account_creation_email", "account_creation_password", "level_assessment_intro",
+        "level_assessment_quiz", "personalization_interests", "personalization_schedule",
+        "notification_permission", "referral_source_survey", "tutorial_walkthrough",
+        "terms_and_privacy_confirmation"
+      ]
+    },
+    "B": {
+      "label": "medium_7_steps",
+      "step_names": [
+        "select_native_language", "account_creation_email", "account_creation_password",
+        "select_learning_goal", "level_assessment_quiz", "notification_permission",
+        "terms_and_privacy_confirmation"
+      ]
+    },
+    "C": {
+      "label": "short_5_steps",
+      "step_names": [
+        "select_native_language", "account_creation_email", "account_creation_password",
+        "level_assessment_quiz", "terms_and_privacy_confirmation"
+      ]
+    }
+  },
+  "notes": "B and C drop nice_to_have steps entirely and defer/drop most can_wait steps, keeping every must_have step. This isolates 'step count' from 'step content' per the experiment hypothesis."
+}

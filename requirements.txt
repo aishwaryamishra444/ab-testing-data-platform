@@ -1,0 +1,6 @@
+# Standard-library only: csv, json, sqlite3, random, uuid, datetime.
+# Nothing external is required to run data_generator.py or build_db.py.
+#
+# Optional, only needed if you extend the project (e.g. pandas-based
+# exploration notebooks, or Assignment 4's dashboard/stats work):
+pandas>=2.0
