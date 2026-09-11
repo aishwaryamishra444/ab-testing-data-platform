@@ -28,7 +28,7 @@ import matplotlib.patches as mpatches
 from matplotlib.gridspec import GridSpec
 import numpy as np
 
-HERE = Path(__file__).parent
+HERE = Path(__file__).parent if "__file__" in globals() else Path.cwd()
 OUT_DIR = HERE
 CHART_DIR = HERE / "charts"
 CHART_DIR.mkdir(exist_ok=True)

@@ -33,7 +33,7 @@ from scipy import stats
 from statsmodels.stats.proportion import proportions_ztest, proportion_confint
 from statsmodels.stats.power import NormalIndPower
 
-HERE = Path(__file__).parent
+HERE = Path(__file__).parent if "__file__" in globals() else Path.cwd()
 
 
 def _json_default(o):
@@ -263,7 +263,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--db", default="../assignment2/db/ab_test.db")
     parser.add_argument("--out", default="results.json")
-    args = parser.parse_args()
+    args, _unknown = parser.parse_known_args()  # parse_known_args: ignores stray args Jupyter/Colab inject (e.g. -f kernel.json)
 
     con = sqlite3.connect(HERE / args.db)
 
@@ -303,9 +303,10 @@ def main():
     print()
     for t in primary["pairwise_tests"]:
         sig = "SIGNIFICANT" if t["significant_at_05"] else "not significant"
+        p_str = "<0.0001" if t["p_value"] < 0.0001 else f"{t['p_value']:.4f}"
         print(f"  {t['label']}:")
         print(f"    diff={t['absolute_diff']:+.1%}  rel_lift={t['relative_lift_pct']:+.1f}%  "
-              f"p={'<0.0001' if t['p_value'] < 0.0001 else f\"{t['p_value']:.4f}\"}  ({sig} at alpha=0.05)")
+              f"p={p_str}  ({sig} at alpha=0.05)")
 
     print("\n" + "=" * 78)
     print("GUARDRAIL REGRESSION FLAGS (C vs A)")

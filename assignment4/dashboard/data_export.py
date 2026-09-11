@@ -12,7 +12,7 @@ import json
 import sqlite3
 from pathlib import Path
 
-HERE = Path(__file__).parent
+HERE = Path(__file__).parent if "__file__" in globals() else Path.cwd()
 
 
 def fetch_all(con, sql):
@@ -26,7 +26,7 @@ def main():
     parser.add_argument("--db", default="../assignment2/db/ab_test.db")
     parser.add_argument("--stats-json", default="../analysis/results.json")
     parser.add_argument("--out", default="dashboard_data.json")
-    args = parser.parse_args()
+    args, _unknown = parser.parse_known_args()  # parse_known_args: ignores stray args Jupyter/Colab inject (e.g. -f kernel.json)
 
     con = sqlite3.connect(HERE / args.db)
 
