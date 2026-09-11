@@ -6,7 +6,7 @@ Full technical documentation: [`00_documentation.md`](00_documentation.md)
 
 | Rubric item | Where it's covered |
 |---|---|
-| Dashboard (1 mark) | [`dashboard/dashboard.html`](dashboard/dashboard.html) — self-contained, interactive (Plotly), opens offline in any browser |
+| Dashboard (1 mark) | [`dashboard/build_dashboard.py`](dashboard/build_dashboard.py) — pure Python (matplotlib + seaborn), renders [`dashboard/dashboard.png`](dashboard/dashboard.png) |
 | KPI Computation (1 mark) | [`analysis/stats_analysis.py`](analysis/stats_analysis.py) + Documentation Section 1 |
 | Statistical Analysis (1 mark) | SRM check, two-proportion z-tests, power recheck — Documentation Section 2 |
 | Business Recommendations (1 mark) | Documentation Sections 3–4 (guardrail interpretation + final ship/hold recommendation) |
@@ -23,12 +23,12 @@ python stats_analysis.py --db ../../assignment2/db/ab_test.db
 cd ../dashboard
 python data_export.py --db ../../assignment2/db/ab_test.db
 
-# 3. Build the dashboard
+# 3. Build the dashboard (matplotlib/seaborn -- no browser, no JS)
 python build_dashboard.py
 ```
 
-Then just double-click `dashboard/dashboard.html` — no server, no
-internet connection required (Plotly.js is embedded inline).
+Produces `dashboard/dashboard.png` (the full composite dashboard) plus
+individual chart PNGs in `dashboard/charts/`.
 
 ## Headline Result
 
@@ -50,10 +50,11 @@ assignment4/
 │   └── results.json           <- computed statistics (consumed by the dashboard)
 ├── dashboard/
 │   ├── data_export.py         <- merges mart tables + results.json
-│   ├── build_dashboard.py     <- renders the self-contained dashboard.html
+│   ├── build_dashboard.py     <- renders the dashboard entirely in matplotlib/seaborn
 │   ├── dashboard_data.json    <- merged data consumed by the dashboard
-│   └── dashboard.html         <- the deliverable -- open this directly
-└── evidence/                  <- dashboard screenshots embedded in the documentation
+│   ├── dashboard.png          <- the deliverable -- full composite dashboard
+│   └── charts/                <- individual charts at higher resolution
+└── executive_summary.md       <- source for the one-page presentation-style PDF
 ```
 
 Full pipeline context: see the [repo root README](../README.md).

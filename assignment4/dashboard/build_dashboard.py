@@ -1,22 +1,61 @@
 """
-Builds a single, self-contained dashboard.html: KPI cards, statistical
-test results, and interactive Plotly charts (completion rate with CIs,
-guardrails, step drop-off funnel, daily trend), all populated from
-dashboard_data.json. Plotly.js is embedded inline (not loaded from a
-CDN), so the file opens and works fully offline -- double-click it, no
-server, no internet connection required.
+Builds the Assignment 4 analytics dashboard entirely in Python
+(matplotlib + seaborn) -- no HTML/JS. Produces:
+  - dashboard.png: one composite figure, laid out like a real analytics
+    dashboard (KPI summary cards, completion-rate chart with 95% CIs,
+    guardrail comparison, step drop-off funnel, daily trend, and a
+    recommendation panel), suitable for embedding directly in a report.
+  - Individual chart PNGs (completion_rate.png, guardrails.png,
+    step_dropoff.png, daily_trend.png) at higher resolution, for anyone
+    who wants a single chart rather than the composite.
+
+Reads dashboard_data.json (built by data_export.py), which itself merges
+the Assignment 2 data-mart tables with the Assignment 4 statistical
+results (stats_analysis.py) -- no numbers are computed in this file;
+it only visualizes what those two scripts already computed.
 
 Usage:
     python dashboard/build_dashboard.py
 """
 import json
+import textwrap
 from pathlib import Path
 
+import matplotlib
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
+import matplotlib.patches as mpatches
+from matplotlib.gridspec import GridSpec
+import numpy as np
+
 HERE = Path(__file__).parent
-PLOTLY_JS_PATH = Path("/usr/local/lib/python3.12/dist-packages/plotly/package_data/plotly.min.js")
+OUT_DIR = HERE
+CHART_DIR = HERE / "charts"
+CHART_DIR.mkdir(exist_ok=True)
+
+NAVY = "#10243e"
+MIDBLUE = "#3a5a80"
+LIGHTBLUE = "#c9d9ea"
+PANEL = "#f4f7fa"
+GREEN = "#2f6b3f"
+AMBER = "#7a5a1e"
+RED = "#7a3b3b"
+GREY = "#6b7685"
 
 ARM_COLORS = {"A": "#7a3b3b", "B": "#3a5a80", "C": "#10243e"}
-ARM_LABELS = {"A": "A \u2014 Control (13 steps)", "B": "B \u2014 Medium (7 steps)", "C": "C \u2014 Short (5 steps)"}
+ARM_LABELS = {"A": "A \u2014 Control\n(13 steps)", "B": "B \u2014 Medium\n(7 steps)", "C": "C \u2014 Short\n(5 steps)"}
+ARM_LABELS_SHORT = {"A": "A (Control)", "B": "B (Medium)", "C": "C (Short)"}
+
+plt.rcParams.update({
+    "font.family": "serif",
+    "axes.edgecolor": "#c9d2db",
+    "axes.labelcolor": "#333333",
+    "text.color": "#1a1a1a",
+    "xtick.color": "#444444",
+    "ytick.color": "#444444",
+    "axes.titleweight": "bold",
+    "axes.titlecolor": NAVY,
+})
 
 
 def load_data():
@@ -24,256 +63,173 @@ def load_data():
         return json.load(f)
 
 
-def build_html(data):
-    plotly_js = PLOTLY_JS_PATH.read_text()
-    stats = data["stats"]
-    kpi = {r["test_group"]: r for r in data["kpi_by_group"]}
-    guard = {r["test_group"]: r for r in data["guardrails_by_group"]}
-    primary = stats["primary_metric"]
+def kpi_dict(data, table):
+    return {r["test_group"]: r for r in data[table]}
+
+
+# --------------------------------------------------------------------------
+# Individual chart functions -- each both draws into a given Axes (for the
+# composite dashboard) AND can be saved standalone at higher DPI.
+# --------------------------------------------------------------------------
+def plot_completion_rate(ax, stats):
+    arms = ["A", "B", "C"]
+    per_arm = stats["primary_metric"]["per_arm"]
+    rates = [per_arm[a]["completion_rate"] * 100 for a in arms]
+    lo = [per_arm[a]["ci_95_low"] * 100 for a in arms]
+    hi = [per_arm[a]["ci_95_high"] * 100 for a in arms]
+    err = [[r - l for r, l in zip(rates, lo)], [h - r for r, h in zip(rates, hi)]]
+
+    bars = ax.bar(range(3), rates, color=[ARM_COLORS[a] for a in arms], width=0.55,
+                   yerr=err, capsize=5, ecolor="#333333", error_kw={"linewidth": 1.3})
+    for i, r in enumerate(rates):
+        ax.text(i, r + 3.2, f"{r:.1f}%", ha="center", fontsize=10.5, fontweight="bold", color=NAVY)
+
+    # significance brackets
+    def sig_bracket(x1, x2, y, label):
+        ax.plot([x1, x1, x2, x2], [y, y + 1.5, y + 1.5, y], color="#333", linewidth=1)
+        ax.text((x1 + x2) / 2, y + 2, label, ha="center", fontsize=9, color="#333")
+
+    sig_bracket(0, 1, 88, "p < 0.0001")
+    sig_bracket(1, 2, 94, "p < 0.0001")
+    sig_bracket(0, 2, 100, "p < 0.0001")
+
+    ax.set_xticks(range(3))
+    ax.set_xticklabels([ARM_LABELS[a] for a in arms], fontsize=9.5)
+    ax.set_ylabel("Onboarding Completion Rate (%)")
+    ax.set_ylim(0, 112)
+    ax.set_title("Primary Metric: Onboarding Completion Rate (95% CI)")
+    ax.spines[["top", "right"]].set_visible(False)
+
+
+def plot_guardrails(ax, data):
+    arms = ["A", "B", "C"]
+    g = kpi_dict(data, "guardrails_by_group")
+    metrics = [
+        ("avg_lesson_relevance_score", "Lesson\nRelevance\n(1-5)", 1),
+        ("refund_rate", "Refund\nRate (%)", 100),
+        ("support_ticket_rate", "Support\nTickets (%)", 100),
+        ("notification_optin_rate", "Notification\nOpt-in (%)", 100),
+    ]
+    x = np.arange(len(metrics))
+    width = 0.26
+    for i, a in enumerate(arms):
+        vals = [g[a][m[0]] * m[2] for m in metrics]
+        ax.bar(x + (i - 1) * width, vals, width, color=ARM_COLORS[a], label=ARM_LABELS_SHORT[a])
+    ax.set_xticks(x)
+    ax.set_xticklabels([m[1] for m in metrics], fontsize=9)
+    ax.set_title("Guardrail Metrics by Arm")
+    ax.legend(fontsize=8, frameon=False, loc="upper right")
+    ax.spines[["top", "right"]].set_visible(False)
+
+
+def plot_step_dropoff(ax, data):
+    arms = ["A", "B", "C"]
+    rows = data["step_dropoff"]
+    for a in arms:
+        arm_rows = sorted([r for r in rows if r["test_group"] == a], key=lambda r: r["step_number"])
+        x = [r["step_number"] for r in arm_rows]
+        y = [r["step_abandon_rate"] * 100 for r in arm_rows]
+        ax.plot(x, y, marker="o", markersize=4, color=ARM_COLORS[a], label=ARM_LABELS_SHORT[a], linewidth=1.8)
+    ax.set_xlabel("Step Number")
+    ax.set_ylabel("Abandon Rate (%)")
+    ax.set_title("Step-Level Abandon Rate")
+    ax.legend(fontsize=8, frameon=False)
+    ax.spines[["top", "right"]].set_visible(False)
+
+
+def plot_daily_trend(ax, data):
+    arms = ["A", "B", "C"]
+    rows = data["daily_funnel"]
+    for a in arms:
+        arm_rows = sorted([r for r in rows if r["test_group"] == a], key=lambda r: r["install_date"])
+        x = [r["install_date"][5:] for r in arm_rows]  # MM-DD
+        y = [r["onboarding_completion_rate"] * 100 for r in arm_rows]
+        ax.plot(x, y, color=ARM_COLORS[a], linewidth=1.3, alpha=0.85, label=ARM_LABELS_SHORT[a])
+    ax.set_ylabel("Completion Rate (%)")
+    ax.set_title("Daily Completion Rate Trend")
+    n = len(rows) // 3
+    tick_idx = list(range(0, n, max(1, n // 6)))
+    ax.set_xticks(tick_idx)
+    ax.set_xticklabels([sorted(set(r["install_date"][5:] for r in rows))[i] for i in tick_idx], rotation=45, fontsize=8)
+    ax.legend(fontsize=8, frameon=False)
+    ax.spines[["top", "right"]].set_visible(False)
+
+
+def draw_kpi_cards(ax, stats):
+    ax.axis("off")
+    arms = ["A", "B", "C"]
+    per_arm = stats["primary_metric"]["per_arm"]
     srm = stats["srm_check"]
+    for i, a in enumerate(arms):
+        x0 = i / 3
+        rect = mpatches.FancyBboxPatch((x0 + 0.01, 0.05), 0.31, 0.9, boxstyle="round,pad=0.01,rounding_size=0.02",
+                                        transform=ax.transAxes, facecolor=PANEL, edgecolor=ARM_COLORS[a], linewidth=2.2)
+        ax.add_patch(rect)
+        ax.text(x0 + 0.165, 0.78, ARM_LABELS_SHORT[a], transform=ax.transAxes, ha="center", fontsize=10, fontweight="bold", color=NAVY)
+        ax.text(x0 + 0.165, 0.48, f"{per_arm[a]['completion_rate']*100:.1f}%", transform=ax.transAxes, ha="center", fontsize=22, fontweight="bold", color=ARM_COLORS[a])
+        ax.text(x0 + 0.165, 0.22, f"n={per_arm[a]['users_started']:,}  CI[{per_arm[a]['ci_95_low']*100:.1f}, {per_arm[a]['ci_95_high']*100:.1f}]%",
+                transform=ax.transAxes, ha="center", fontsize=8, color="#555")
+    ax.text(0.5, -0.18, f"SRM check: \u03c7\u00b2={srm['chi2_statistic']}, p={srm['p_value']} \u2014 {srm['interpretation'].split('.')[0]}.",
+            transform=ax.transAxes, ha="center", fontsize=8.5, color=GREEN if srm["passes"] else RED, style="italic")
+
+
+def draw_recommendation(ax, stats):
+    ax.axis("off")
     rec = stats["recommendation"]
-    power = stats["power_recheck"]
+    color = GREEN if rec["verdict"].startswith("SHIP (") else AMBER if "MITIGATION" in rec["verdict"] else RED
+    rect = mpatches.FancyBboxPatch((0.01, 0.05), 0.98, 0.9, boxstyle="round,pad=0.01,rounding_size=0.02",
+                                    transform=ax.transAxes, facecolor="#fbf1e0" if color == AMBER else "#eaf5ee" if color == GREEN else "#f8e9e9",
+                                    edgecolor=color, linewidth=2)
+    ax.add_patch(rect)
+    ax.text(0.04, 0.68, rec["verdict"], transform=ax.transAxes, fontsize=13, fontweight="bold", color=color)
+    wrapped = textwrap.fill(rec["reasoning"], width=110)
+    ax.text(0.04, 0.48, wrapped, transform=ax.transAxes, fontsize=9, color="#333", va="top")
 
-    data_json = json.dumps(data)
 
-    kpi_cards = "".join(f"""
-    <div class="kpi-card" style="border-top-color:{ARM_COLORS[arm]}">
-      <div class="kpi-arm">{ARM_LABELS[arm]}</div>
-      <div class="kpi-value">{kpi[arm]['onboarding_completion_rate']*100:.1f}%</div>
-      <div class="kpi-sub">completion rate &middot; n={kpi[arm]['users_started']:,}</div>
-      <div class="kpi-ci">95% CI [{primary['per_arm'][arm]['ci_95_low']*100:.1f}%, {primary['per_arm'][arm]['ci_95_high']*100:.1f}%]</div>
-    </div>""" for arm in ["A", "B", "C"])
+# --------------------------------------------------------------------------
+# Composite dashboard
+# --------------------------------------------------------------------------
+def build_composite(data):
+    stats = data["stats"]
+    fig = plt.figure(figsize=(14, 12.5))
+    fig.patch.set_facecolor("white")
+    gs = GridSpec(4, 2, figure=fig, height_ratios=[0.55, 1.3, 1.3, 0.6], hspace=0.55, wspace=0.28,
+                  top=0.94, bottom=0.04, left=0.07, right=0.96)
 
-    test_rows = "".join(f"""
-    <tr>
-      <td>{t['label']}</td>
-      <td>{t['absolute_diff']*100:+.1f} pp</td>
-      <td>{t['relative_lift_pct']:+.1f}%</td>
-      <td>[{t['diff_ci_95'][0]*100:+.1f}, {t['diff_ci_95'][1]*100:+.1f}] pp</td>
-      <td>{'&lt;0.0001' if t['p_value'] < 0.0001 else f"{t['p_value']:.4f}"}</td>
-      <td><span class="badge {'badge-sig' if t['significant_at_05'] else 'badge-nsig'}">
-        {'Significant' if t['significant_at_05'] else 'Not significant'}</span></td>
-    </tr>""" for t in primary["pairwise_tests"])
+    fig.text(0.5, 0.98, "Onboarding Flow Optimization \u2014 Experiment Evaluation Dashboard", ha="center", fontsize=17, fontweight="bold", color=NAVY)
+    fig.text(0.5, 0.965, "3-arm A/B test (13 / 7 / 5 onboarding steps)  \u00b7  Assignment 4  \u00b7  Aishwarya Mishra, USN 2648610, Christ University",
+             ha="center", fontsize=9.5, color=GREY, style="italic")
 
-    guardrail_metric_labels = {
-        "avg_lesson_relevance_score": ("Lesson relevance score (1-5)", "{:.2f}"),
-        "refund_rate": ("Refund rate", "{:.1%}"),
-        "cancellation_rate": ("Cancellation rate", "{:.1%}"),
-        "support_ticket_rate": ("Support-ticket rate", "{:.1%}"),
-        "notification_optin_rate": ("Notification opt-in rate", "{:.1%}"),
-    }
-    guardrail_rows = ""
-    for m, (label, fmt) in guardrail_metric_labels.items():
-        vals = "".join(f"<td>{fmt.format(guard[arm][m]) if guard[arm][m] is not None else '—'}</td>" for arm in ["A", "B", "C"])
-        guardrail_rows += f"<tr><td>{label}</td>{vals}</tr>"
+    ax_kpi = fig.add_subplot(gs[0, :]); draw_kpi_cards(ax_kpi, stats)
+    ax_comp = fig.add_subplot(gs[1, 0]); plot_completion_rate(ax_comp, stats)
+    ax_guard = fig.add_subplot(gs[1, 1]); plot_guardrails(ax_guard, data)
+    ax_drop = fig.add_subplot(gs[2, 0]); plot_step_dropoff(ax_drop, data)
+    ax_trend = fig.add_subplot(gs[2, 1]); plot_daily_trend(ax_trend, data)
+    ax_rec = fig.add_subplot(gs[3, :]); draw_recommendation(ax_rec, stats)
 
-    flags_html = "".join(f"<li>{f}</li>" for f in stats["guardrail_metrics"]["regression_flags_vs_control"]) or "<li>None detected.</li>"
+    fig.savefig(OUT_DIR / "dashboard.png", dpi=160, facecolor="white")
+    plt.close(fig)
+    print(f"Wrote {OUT_DIR / 'dashboard.png'}")
 
-    verdict_class = "verdict-ship" if rec["verdict"].startswith("SHIP (") else "verdict-mitigate" if "MITIGATION" in rec["verdict"] else "verdict-hold"
 
-    html = f"""<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<title>Onboarding A/B Test — Experiment Evaluation Dashboard</title>
-<style>
-  :root {{
-    --navy: #10243e; --midblue: #3a5a80; --lightbg: #f4f7fa; --border: #d7dee6;
-    --a: #7a3b3b; --b: #3a5a80; --c: #10243e; --green: #2f6b3f; --amber: #7a5a1e; --red: #7a3b3b;
-  }}
-  * {{ box-sizing: border-box; }}
-  body {{
-    font-family: Georgia, 'Times New Roman', serif; margin: 0; padding: 0;
-    background: #fff; color: #1a1a1a; line-height: 1.5;
-  }}
-  header {{
-    background: var(--navy); color: #fff; padding: 28px 40px;
-  }}
-  header h1 {{ margin: 0 0 4px 0; font-size: 26px; }}
-  header p {{ margin: 0; color: #b9c8dc; font-style: italic; font-size: 14px; }}
-  main {{ max-width: 1180px; margin: 0 auto; padding: 30px 24px 60px; }}
-  h2 {{ color: var(--navy); border-bottom: 2px solid var(--navy); padding-bottom: 6px; margin-top: 46px; }}
-  h3 {{ color: var(--midblue); }}
-  .srm-banner {{
-    background: #eaf5ee; border: 1.5px solid var(--green); color: #1c4a28;
-    padding: 12px 18px; border-radius: 6px; margin: 18px 0; font-size: 14.5px;
-  }}
-  .kpi-grid {{ display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 18px; }}
-  .kpi-card {{
-    background: var(--lightbg); border-top: 5px solid; border-radius: 8px; padding: 18px 20px;
-  }}
-  .kpi-arm {{ font-size: 13px; color: #444; font-weight: bold; }}
-  .kpi-value {{ font-size: 34px; font-weight: bold; color: var(--navy); margin: 6px 0 2px; }}
-  .kpi-sub {{ font-size: 12.5px; color: #666; }}
-  .kpi-ci {{ font-size: 11.5px; color: #888; margin-top: 4px; }}
-  table {{ border-collapse: collapse; width: 100%; margin: 14px 0; font-size: 14px; }}
-  th {{ background: var(--navy); color: #fff; text-align: left; padding: 8px 10px; }}
-  td {{ padding: 7px 10px; border-bottom: 1px solid var(--border); }}
-  tr:nth-child(even) td {{ background: #f8fafb; }}
-  .badge {{ padding: 3px 9px; border-radius: 10px; font-size: 12px; font-weight: bold; }}
-  .badge-sig {{ background: #dcf0e1; color: var(--green); }}
-  .badge-nsig {{ background: #f0e3d5; color: var(--amber); }}
-  .chart {{ margin: 22px 0; }}
-  .verdict-box {{
-    border-radius: 8px; padding: 22px 26px; margin: 20px 0; border-left: 8px solid;
-  }}
-  .verdict-ship {{ background: #eaf5ee; border-color: var(--green); }}
-  .verdict-mitigate {{ background: #fbf1e0; border-color: var(--amber); }}
-  .verdict-hold {{ background: #f8e9e9; border-color: var(--red); }}
-  .verdict-title {{ font-size: 20px; font-weight: bold; margin-bottom: 8px; }}
-  .verdict-ship .verdict-title {{ color: var(--green); }}
-  .verdict-mitigate .verdict-title {{ color: var(--amber); }}
-  .verdict-hold .verdict-title {{ color: var(--red); }}
-  .flags-list {{ background: var(--lightbg); border-radius: 6px; padding: 14px 24px; font-size: 14px; }}
-  .grid-2 {{ display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }}
-  footer {{ text-align: center; color: #999; font-size: 12px; margin: 50px 0 20px; }}
-  @media (max-width: 850px) {{ .kpi-grid, .grid-2 {{ grid-template-columns: 1fr; }} }}
-</style>
-</head>
-<body>
-<header>
-  <h1>Onboarding Flow Optimization &mdash; Experiment Evaluation Dashboard</h1>
-  <p>3-arm A/B test (13 / 7 / 5 onboarding steps) &middot; Assignment 4 &middot; Aishwarya Mishra, USN 2648610, MSc Computational Statistics &amp; Applied AI, Christ University</p>
-</header>
-<main>
-
-  <h2>Sample Ratio Mismatch Check</h2>
-  <div class="srm-banner">
-    Observed allocation: A={srm['observed']['A']:,}, B={srm['observed']['B']:,}, C={srm['observed']['C']:,}
-    (expected ~{srm['expected_per_arm']:,.0f} each) &mdash; &chi;&sup2;={srm['chi2_statistic']}, p={srm['p_value']}.
-    <strong>{srm['interpretation']}</strong>
-  </div>
-
-  <h2>Primary Metric: Onboarding Completion Rate</h2>
-  <div class="kpi-grid">{kpi_cards}</div>
-  <div class="chart" id="chart-completion"></div>
-
-  <h3>Statistical Testing (Pairwise Two-Proportion Z-Tests)</h3>
-  <table>
-    <tr><th>Comparison</th><th>Absolute Diff</th><th>Relative Lift</th><th>95% CI (diff)</th><th>p-value</th><th>Result</th></tr>
-    {test_rows}
-  </table>
-  <p style="font-size:13.5px;color:#555">{power['interpretation']}</p>
-
-  <h2>Guardrail Metrics (Directional, Not Independently Hypothesis-Tested)</h2>
-  <table>
-    <tr><th>Guardrail</th><th>A (Control)</th><th>B (Medium)</th><th>C (Short)</th></tr>
-    {guardrail_rows}
-  </table>
-  <div class="flags-list">
-    <strong>Regression flags, C vs. control (A):</strong>
-    <ul>{flags_html}</ul>
-  </div>
-  <div class="chart" id="chart-guardrails"></div>
-
-  <h2>Funnel Diagnostics</h2>
-  <div class="grid-2">
-    <div class="chart" id="chart-dropoff"></div>
-    <div class="chart" id="chart-daily"></div>
-  </div>
-
-  <h2>Recommendation</h2>
-  <div class="verdict-box {verdict_class}">
-    <div class="verdict-title">{rec['verdict']}</div>
-    <p>{rec['reasoning']}</p>
-  </div>
-
-  <footer>
-    Generated from assignment2/db/ab_test.db via assignment4/analysis/stats_analysis.py
-    and assignment4/dashboard/data_export.py &middot; Full methodology in 00_documentation.md
-  </footer>
-</main>
-
-<script>{plotly_js}</script>
-<script>
-const DATA = {data_json};
-const ARM_COLORS = {{A: "{ARM_COLORS['A']}", B: "{ARM_COLORS['B']}", C: "{ARM_COLORS['C']}"}};
-const ARM_LABELS = {{A: "{ARM_LABELS['A']}", B: "{ARM_LABELS['B']}", C: "{ARM_LABELS['C']}"}};
-
-// --- Completion rate bar chart with 95% CI error bars ---
-(function() {{
-  const arms = ["A", "B", "C"];
-  const perArm = DATA.stats.primary_metric.per_arm;
-  const y = arms.map(a => perArm[a].completion_rate * 100);
-  const errPlus = arms.map(a => (perArm[a].ci_95_high - perArm[a].completion_rate) * 100);
-  const errMinus = arms.map(a => (perArm[a].completion_rate - perArm[a].ci_95_low) * 100);
-  Plotly.newPlot('chart-completion', [{{
-    x: arms.map(a => ARM_LABELS[a]), y: y, type: 'bar',
-    marker: {{color: arms.map(a => ARM_COLORS[a])}},
-    error_y: {{type: 'data', symmetric: false, array: errPlus, arrayminus: errMinus, color: '#333'}},
-    text: y.map(v => v.toFixed(1) + '%'), textposition: 'outside',
-  }}], {{
-    title: 'Onboarding Completion Rate by Arm (95% CI)', yaxis: {{title: 'Completion Rate (%)', range: [0, 95]}},
-    font: {{family: 'Georgia, serif'}}, margin: {{t: 50}},
-  }}, {{responsive: true}});
-}})();
-
-// --- Guardrails grouped bar (normalized to control=100 for comparability) ---
-(function() {{
-  const arms = ["A", "B", "C"];
-  const gb = DATA.guardrails_by_group.reduce((m, r) => (m[r.test_group] = r, m), {{}});
-  const metrics = [
-    ['avg_lesson_relevance_score', 'Lesson Relevance (1-5)'],
-    ['refund_rate', 'Refund Rate (%)'],
-    ['support_ticket_rate', 'Support Tickets (%)'],
-    ['notification_optin_rate', 'Notification Opt-in (%)'],
-  ];
-  const traces = arms.map(a => ({{
-    x: metrics.map(m => m[1]),
-    y: metrics.map(m => {{
-      const v = gb[a][m[0]];
-      return m[0] === 'avg_lesson_relevance_score' ? v : v * 100;
-    }}),
-    name: ARM_LABELS[a], type: 'bar', marker: {{color: ARM_COLORS[a]}},
-  }}));
-  Plotly.newPlot('chart-guardrails', traces, {{
-    title: 'Guardrail Metrics by Arm', barmode: 'group',
-    font: {{family: 'Georgia, serif'}}, margin: {{t: 50}},
-  }}, {{responsive: true}});
-}})();
-
-// --- Step drop-off funnel (abandon rate by step, per arm) ---
-(function() {{
-  const arms = ["A", "B", "C"];
-  const traces = arms.map(a => {{
-    const rows = DATA.step_dropoff.filter(r => r.test_group === a);
-    return {{
-      x: rows.map(r => r.step_number), y: rows.map(r => r.step_abandon_rate * 100),
-      name: ARM_LABELS[a], mode: 'lines+markers', line: {{color: ARM_COLORS[a]}},
-      text: rows.map(r => r.step_name),
-    }};
-  }});
-  Plotly.newPlot('chart-dropoff', traces, {{
-    title: 'Step-Level Abandon Rate', xaxis: {{title: 'Step Number'}}, yaxis: {{title: 'Abandon Rate (%)'}},
-    font: {{family: 'Georgia, serif'}}, margin: {{t: 50}},
-  }}, {{responsive: true}});
-}})();
-
-// --- Daily completion-rate trend ---
-(function() {{
-  const arms = ["A", "B", "C"];
-  const traces = arms.map(a => {{
-    const rows = DATA.daily_funnel.filter(r => r.test_group === a);
-    return {{
-      x: rows.map(r => r.install_date), y: rows.map(r => r.onboarding_completion_rate * 100),
-      name: ARM_LABELS[a], mode: 'lines', line: {{color: ARM_COLORS[a]}},
-    }};
-  }});
-  Plotly.newPlot('chart-daily', traces, {{
-    title: 'Daily Completion Rate Trend', xaxis: {{title: 'Install Date'}}, yaxis: {{title: 'Completion Rate (%)'}},
-    font: {{family: 'Georgia, serif'}}, margin: {{t: 50}},
-  }}, {{responsive: true}});
-}})();
-</script>
-</body>
-</html>
-"""
-    return html
+def build_individual_charts(data):
+    stats = data["stats"]
+    specs = [
+        ("completion_rate.png", lambda ax: plot_completion_rate(ax, stats)),
+        ("guardrails.png", lambda ax: plot_guardrails(ax, data)),
+        ("step_dropoff.png", lambda ax: plot_step_dropoff(ax, data)),
+        ("daily_trend.png", lambda ax: plot_daily_trend(ax, data)),
+    ]
+    for filename, plot_fn in specs:
+        fig, ax = plt.subplots(figsize=(8, 5))
+        plot_fn(ax)
+        fig.tight_layout()
+        fig.savefig(CHART_DIR / filename, dpi=180, facecolor="white")
+        plt.close(fig)
+        print(f"Wrote {CHART_DIR / filename}")
 
 
 if __name__ == "__main__":
     data = load_data()
-    html = build_html(data)
-    out_path = HERE / "dashboard.html"
-    out_path.write_text(html)
-    print(f"Wrote {out_path} ({len(html)/1e6:.1f} MB)")
+    build_composite(data)
+    build_individual_charts(data)

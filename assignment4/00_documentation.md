@@ -183,11 +183,20 @@ arm with the *largest* completion-rate win is not the arm with the
    application of that model to this result, not an independent
    forecast.
 
-## 6. Dashboard Preview
+## 6. Dashboard
 
-![Dashboard top: SRM check, KPI cards, and the completion-rate chart with 95% confidence intervals](evidence/dashboard_preview_top.png)
+The dashboard is built entirely in Python (matplotlib + seaborn) —
+`dashboard/build_dashboard.py` reads `dashboard_data.json` (itself just a
+merge of the Assignment 2 mart tables with `stats_analysis.py`'s output;
+no numbers are computed in the plotting code) and renders one composite
+figure: KPI summary cards with confidence intervals, the primary-metric
+chart with significance brackets, the guardrail comparison, the
+step-level drop-off funnel, the daily trend, and the final
+recommendation — all in a single `dashboard.png`. Each panel is also
+saved standalone at higher resolution in `dashboard/charts/` for anyone
+who wants one chart rather than the full composite.
 
-![Dashboard bottom: funnel diagnostics and the final ship/hold recommendation](evidence/dashboard_preview_bottom.png)
+![Full analytics dashboard: KPI cards, completion-rate chart with 95% CIs and significance brackets, guardrail comparison, funnel diagnostics, and recommendation](dashboard/dashboard.png)
 
 ## 7. How to Run
 
@@ -203,10 +212,10 @@ python data_export.py --db ../../assignment2/db/ab_test.db
 # 3. Build the dashboard
 python build_dashboard.py
 
-# Open dashboard/dashboard.html directly in any browser -- no server needed
+# Open dashboard/dashboard.png directly, or any chart in dashboard/charts/
 ```
 
-See [`dashboard/dashboard.html`](dashboard/dashboard.html) for the
-interactive dashboard and
+See [`dashboard/dashboard.png`](dashboard/dashboard.png) for the full
+dashboard and
 [`executive_summary.pdf`](../docs/Assignment4_Executive_Summary.pdf) for
 a one-page presentation-style summary of this document.
