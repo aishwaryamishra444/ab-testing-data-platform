@@ -291,6 +291,76 @@ def build_journey_diagram():
     return svg, W, H
 
 
+# =====================================================================
+# DIAGRAM 4: Pipeline Automation & Reliability Flow (Assignment 3)
+# =====================================================================
+def build_reliability_diagram():
+    W, H = 980, 780
+    svg = svg_header(W, H)
+    svg += f'<text x="{W/2}" y="36" text-anchor="middle" font-size="19" font-weight="700" fill="{NAVY}">Pipeline Automation &amp; Reliability Flow</text>\n'
+    svg += f'<text x="{W/2}" y="57" text-anchor="middle" font-size="11" fill="{GREY}" font-style="italic">Assignment 3 \u2014 scheduling, retries, validation, monitoring, alerting</text>\n'
+
+    cx = W / 2
+    svg += box(cx-140, 78, 280, 44, "cron / scheduler_demo.py", "fires pipeline_runner.py on schedule", fill=MIDBLUE, sub_size=9)
+    svg += arrow(cx, 122, cx, 156)
+    svg += box(cx-120, 156, 240, 40, "build_pipeline() attempt", fill=NAVY, title_size=11)
+
+    # three exits from the attempt: TransientError (left), success->validate (center), FatalError (right)
+    y0 = 196
+    svg += arrow(cx, y0+40, cx-330, y0+70)
+    svg += arrow(cx, y0+40, cx, y0+70)
+    svg += arrow(cx, y0+40, cx+330, y0+70)
+    svg += label(cx-220, y0+55, "raises TransientError", size=9, color=GREY, anchor="middle")
+    svg += label(cx, y0+55, "no error", size=9, color=GREY, anchor="middle")
+    svg += label(cx+220, y0+55, "raises FatalError", size=9, color=GREY, anchor="middle")
+
+    y1 = y0 + 70 + 34
+    # column centers, evenly spaced, wide enough apart that 220px-wide boxes never touch
+    col_retry, col_valid, col_fatal = cx-330, cx, cx+330
+
+    svg += box(col_retry-125, y1, 250, 46, "run_with_retries()", "sleep(delay x backoff^n), retry", fill="#7a5a1e", sub_size=8.8)
+    svg += f'<path d="M {col_retry-125} {y1+23} C {col_retry-200} {y1+23}, {col_retry-200} {y0+30}, {cx-115} {y0+30}" fill="none" stroke="{MIDBLUE}" stroke-width="1.8" marker-end="url(#arrow)"/>\n'
+    svg += label(col_retry-60, y1-16, "retry (attempt < max)", size=8, color=GREY, anchor="middle")
+
+    svg += box(col_valid-110, y1, 220, 46, "run_validation()", "11 policed data-quality checks", fill=NAVY, sub_size=8.8)
+    svg += box(col_fatal-125, y1, 250, 46, "no retry (by design)", "missing file / bad config / bad schema", fill="#7a3b3b", sub_size=8.3)
+
+    y2 = y1 + 46 + 44
+    svg += arrow(col_retry, y1+46, col_retry, y2)
+    svg += label(col_retry+120, y1+70, "attempts exhausted", size=8.3, color=GREY, anchor="middle")
+    svg += box(col_retry-115, y2, 230, 42, "failed_retries_exhausted", fill="#7a3b3b", title_size=10)
+
+    svg += arrow(col_valid-55, y1+46, col_valid-140, y2)
+    svg += arrow(col_valid+55, y1+46, col_valid+140, y2)
+    svg += box(col_valid-250, y2, 220, 42, "failed_validation", fill="#7a3b3b", title_size=10.5)
+    svg += box(col_valid+30, y2, 220, 42, "success", fill="#2f6b3f", title_size=11.5)
+
+    svg += arrow(col_fatal, y1+46, col_fatal, y2)
+    svg += box(col_fatal-115, y2, 230, 42, "failed_fatal", fill="#7a3b3b", title_size=10.5)
+
+    # converge into monitoring + alerting
+    y3 = y2 + 42 + 44
+    mon_x, alert_x = cx-260, cx+120
+    for src_x in [col_retry, col_valid-140, col_fatal]:
+        svg += arrow(src_x, y2+42, mon_x+130, y3, color=GREY, width=1.4)
+    for src_x in [col_retry, col_valid+140, col_fatal]:
+        svg += arrow(src_x, y2+42, alert_x+130, y3, color=GREY, width=1.4)
+    svg += arrow(col_valid+140, y2+42, mon_x+130, y3, color=GREY, width=1.4)
+
+    svg += box(mon_x, y3, 260, 46, "record_run()", "append to logs/run_history.jsonl", fill=MIDBLUE, sub_size=8.8)
+    svg += box(alert_x, y3, 260, 46, "Notifier.notify()", "console/log; pluggable to email/Slack", fill="#7a5a1e", sub_size=8.8)
+    svg += label((mon_x+130+alert_x+130)/2, y3-8, "every outcome is recorded; only failures alert", size=8.5, color=GREY, anchor="middle")
+
+    y4 = y3 + 46 + 40
+    svg += arrow(mon_x+130, y3+46, mon_x+130, y4)
+    svg += box(mon_x-10, y4, 280, 40, "monitor.py --check", "success-rate + latest-run health", fill=GREY, title_size=9.5, sub_size=8.3)
+    svg += arrow(alert_x+130, y3+46, alert_x+130, y4)
+    svg += box(alert_x, y4, 240, 40, "owner / stakeholders", "investigate before next run", fill=GREY, title_size=9.5, sub_size=8.3)
+
+    svg += "</svg>"
+    return svg, W, H
+
+
 if __name__ == "__main__":
     import cairosvg
 
@@ -298,6 +368,7 @@ if __name__ == "__main__":
         (build_pipeline_diagram, "data_architecture.svg"),
         (build_erd_diagram, "star_schema_erd.svg"),
         (build_journey_diagram, "experiment_flow.svg"),
+        (build_reliability_diagram, "pipeline_reliability_flow.svg"),
     ]:
         svg, w, h = build_fn()
         out_path = HERE / filename

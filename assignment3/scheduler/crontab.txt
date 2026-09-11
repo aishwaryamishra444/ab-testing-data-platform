@@ -1,0 +1,28 @@
+# Example crontab entry for running the pipeline daily, unattended.
+#
+# Install with:  crontab -e
+# then paste the line below (with paths adjusted to your actual clone
+# location), save, and exit. Verify it's registered with: crontab -l
+#
+# IMPORTANT: cron runs with a minimal environment (no PATH, no shell
+# profile, no conda/venv activation) -- always use absolute paths for
+# both the interpreter and the script, and redirect output explicitly,
+# or the job will silently fail to find `python3` at all.
+
+# Run daily at 02:00 server time. Absolute paths throughout; stdout+stderr
+# both redirected into the same rotating log pipeline_runner.py already
+# writes to via logging, plus a raw cron-level capture as a second safety
+# net (so even a Python-startup-time crash, before logging is configured,
+# is still captured somewhere).
+0 2 * * * cd /path/to/ab-testing-data-platform/assignment3 && /usr/bin/python3 pipeline_runner.py --max-retries 5 --retry-delay-seconds 300 >> /path/to/ab-testing-data-platform/assignment3/logs/cron.log 2>&1
+
+# Optional second job: an independent monitoring check, offset 15 minutes
+# after the pipeline is expected to finish, that exits non-zero (and can
+# be wired to cron's own MAILTO, or another alerting hook) if the run
+# didn't succeed -- a second layer of alerting independent of whether
+# pipeline_runner.py's own in-process notifier fired correctly.
+30 2 * * * cd /path/to/ab-testing-data-platform/assignment3 && /usr/bin/python3 monitor.py --check >> /path/to/ab-testing-data-platform/assignment3/logs/monitor_cron.log 2>&1
+
+# To get cron's own failure emails (belt-and-suspenders on top of the
+# pipeline's own Notifier), set this at the top of the crontab:
+# MAILTO=data-team@example.com

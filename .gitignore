@@ -15,3 +15,7 @@ venv/
 
 # OS
 .DS_Store
+
+# Assignment 3 runtime artifacts (regenerate by running the pipeline)
+assignment3/logs/*.log
+assignment3/logs/*.jsonl
