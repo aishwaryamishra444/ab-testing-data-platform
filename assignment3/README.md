@@ -40,8 +40,8 @@ assignment3/
 ├── pipeline_runner.py       <- orchestrator: retries, validation, logging, monitoring, alerting
 ├── notifier.py               <- pluggable alert channel (console/log by default; email/Slack stubs)
 ├── monitor.py                 <- run-history health summary + --check for chaining into alerting
-├── render_terminal_screenshots.py  <- renders real captured run output into evidence/*.png
-├── evidence/                  <- terminal-capture screenshots embedded in the PDF report
+├── render_terminal_screenshots.py  <- optional: renders synthesized terminal captures (evidence/ now holds real screenshots instead)
+├── evidence/                  <- real terminal screenshots from local runs, embedded in the PDF report
 ├── scheduler/
 │   ├── crontab.txt            <- real production cron entry + setup notes
 │   └── scheduler_demo.py      <- pure-Python scheduler for demo / no-cron environments

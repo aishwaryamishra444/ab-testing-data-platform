@@ -250,88 +250,75 @@ function as an integrated whole, not just as isolated units.
 
 ## 11. Execution Evidence
 
-The screenshots below are unedited terminal captures from an actual run
-of this codebase (`assignment3/render_terminal_screenshots.py` renders
-the raw stdout each command produced into these images — the text is not
-retyped or paraphrased). They walk through the same scenarios as
-Section 10, in the order a reviewer would want to verify them: normal
-operation, both retry outcomes, both non-retried failure types, and the
-monitoring view that ties all of them together.
+The screenshots below are direct, unedited terminal captures taken while
+running this codebase locally (`(base) aishwaryamishra@Aishwaryas-Laptop`),
+not retyped or synthesized. Several capture more than one command in a
+single scrollback, in the order they were actually run.
 
 ### 11.1 Normal Run
 
 ![Normal pipeline run: all five layers build, all 11 policed validation checks pass](evidence/01_normal_run.png)
 
-*A complete, unattended run: raw ingestion through data-mart build, the
-data-quality check output inherited from Assignment 2, and the
-validation-policy verdict (Section 4) that turns those checks into a
-pass/fail decision.*
+*`python3 pipeline_runner.py` with no flags: raw ingestion through
+data-mart build, the data-quality check output inherited from
+Assignment 2, and the validation-policy verdict (Section 4) that turns
+those checks into a pass/fail decision. Succeeded after 0 retries in 3.5s.*
 
 ### 11.2 Transient Failure That Recovers
 
-![Two retries logged as WARNING, then the run succeeds on the third attempt](evidence/02_retry_then_succeed.png)
+![Terminal scrollback: the normal run above, immediately followed by two WARNING retries and a successful third attempt](evidence/02_retry_then_succeed.png)
 
-*`--simulate transient-then-ok`: the first two attempts raise
-`TransientError` and are logged as `WARNING`, not `ERROR` — a retry that's
-still within budget is an expected, non-alarming event. The third attempt
-succeeds and the run completes normally, with `retries_used=2` recorded
-in the monitoring history.*
+*Continuing the same session, `--simulate transient-then-ok`: the first
+two attempts raise `TransientError` and are logged as `WARNING`, not
+`ERROR` — a retry still within budget is an expected, non-alarming event.
+The third attempt succeeds; the run completes with `retries_used=2`
+recorded in the monitoring history.*
 
 ### 11.3 Retries Exhausted → Alert
 
-![Three retries, then CRITICAL alert box with the failure reason](evidence/03_retries_exhausted_alert.png)
+![Terminal scrollback: the retry-then-succeed run above, followed by three retries that never recover and the CRITICAL alert box](evidence/03_retries_exhausted_alert.png)
 
 *`--simulate always-transient --max-retries 3`: three `WARNING`-level
 retries, then an `ERROR` when the retry budget is exhausted, then the
-`Notifier`'s `CRITICAL` alert — printed here via the default `LogNotifier`
-(Section 6), the same call site that would instead page an on-call
-engineer if `EmailNotifier` or `SlackWebhookNotifier` were configured.*
+`Notifier`'s `CRITICAL` alert — printed here via the default
+`LogNotifier` (Section 6), the same call site that would instead page an
+on-call engineer if `EmailNotifier` or `SlackWebhookNotifier` were
+configured.*
 
 ### 11.4 Fatal Error — No Retry
 
-![Missing source file fails immediately with zero retries](evidence/04_fatal_missing_file.png)
+![Terminal scrollback: the retries-exhausted run above, followed by a missing-file run that fails immediately with zero retries](evidence/04_fatal_missing_file.png)
 
 *`--simulate fatal-missing-file`: no `WARNING` lines at all — a missing
 file is classified `FatalError` (Section 2) and goes straight to the
-alert, since retrying would just repeat an identical failure five times
-before saying anything useful.*
+alert, naming the exact path it looked for
+(`/Users/aishwaryamishra/Downloads/ab-testing-data-platform/assignment1/generated_data/does_not_exist.csv`)
+rather than retrying an identical failure five times before saying
+anything useful.*
 
 ### 11.5 Validation Failure — No Retry
 
-![Corrupted input data passes ingestion but fails the validation policy](evidence/05_fatal_validation_failure.png)
+![Terminal scrollback: two validation-failure runs back to back, both caught by the same policy check](evidence/05_fatal_validation_failure.png)
 
-*`--simulate bad-data`: this is the scenario that most distinguishes this
-design from a naive "retry everything" pipeline. The build itself
-succeeds mechanically — SQL runs, tables populate — but
+*`--simulate bad-data`, run twice: this is the scenario that most
+distinguishes this design from a naive "retry everything" pipeline. The
+build succeeds mechanically — SQL runs, tables populate — but
 `run_validation()` (Section 4) catches that `mart_kpi_group_count`
 violates policy and raises `ValidationFailure` before the run can be
 called successful. The alert names the specific check that failed, not
-just "something went wrong."*
+just "something went wrong," and — correctly — neither run retried.*
 
 ### 11.6 Monitoring: Health Summary Across Runs
 
-![monitor.py summarizing six runs, flagging the below-threshold success rate](evidence/06_monitor_health_summary.png)
+![Terminal scrollback: the tail of the validation-failure run above, followed by monitor.py's full health summary table](evidence/06_monitor_health_summary.png)
 
-*`monitor.py --last 15` after the five scenarios above plus one final
-normal run: every outcome — both successes, both failure types, and the
-retry-exhaustion case — appears as one row each, pulled from
-`logs/run_history.jsonl`. Because the most recent run happened to
-succeed, the per-run alert (Section 11.3) would stay quiet — but the
-success-rate check (Section 5) still flags the run of failures, which is
-exactly the "pipeline is flapping, not just currently down" case that
-check exists to catch.*
-
-### 11.7 Scheduler Firing Live
-
-![scheduler_demo.py invoking pipeline_runner.py on its own, unattended](evidence/07_scheduler_live_fire.png)
-
-*`scheduler_demo.py --demo-interval-seconds 4`: the same schedule
-mechanism as the production crontab entry (Section 7), compressed to a
-four-second interval so the trigger can be observed directly instead of
-waiting for a real 2 AM run. The scheduler process itself never touches
-the pipeline's internals — it only invokes `pipeline_runner.py` as a
-subprocess, so everything demonstrated in 11.1–11.6 is exactly what fires
-under the real schedule too.*
+*`monitor.py --last 15` after the five scenarios above: every outcome —
+both successes, both failure types, and the retry-exhaustion case —
+appears as one row each, pulled straight from `logs/run_history.jsonl`.
+Because the most recent run at that point had failed validation, both
+alerts fire: the per-run "did not succeed" flag *and* the "success rate
+below 70%" flag (Section 5) — exactly the two-layer signal that check is
+designed to give.*
 
 ## 12. How to Run
 
