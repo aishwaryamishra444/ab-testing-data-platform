@@ -27,18 +27,21 @@ python scheduler/scheduler_demo.py --demo-interval-seconds 15 --retry-delay-seco
 ```
 
 To see the retry/alert paths without waiting for a real failure, use the
-built-in failure simulators — see Documentation Section 11 for the full
-set of `--simulate` commands.
+built-in failure simulators — see Documentation Section 12 for the full
+set of `--simulate` commands, and Section 11 for real, unedited terminal
+screenshots from each of them.
 
 ## Repo Structure
 
 ```
 assignment3/
-├── 00_documentation.md      <- full write-up (error taxonomy, design rationale, observed results)
+├── 00_documentation.md      <- full write-up (error taxonomy, design rationale, observed results, evidence)
 ├── README.md                <- you are here
 ├── pipeline_runner.py       <- orchestrator: retries, validation, logging, monitoring, alerting
 ├── notifier.py               <- pluggable alert channel (console/log by default; email/Slack stubs)
 ├── monitor.py                 <- run-history health summary + --check for chaining into alerting
+├── render_terminal_screenshots.py  <- renders real captured run output into evidence/*.png
+├── evidence/                  <- terminal-capture screenshots embedded in the PDF report
 ├── scheduler/
 │   ├── crontab.txt            <- real production cron entry + setup notes
 │   └── scheduler_demo.py      <- pure-Python scheduler for demo / no-cron environments
