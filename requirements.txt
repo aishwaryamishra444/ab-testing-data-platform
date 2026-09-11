@@ -6,6 +6,11 @@
 # (requires pandoc as a system binary too - see https://pandoc.org/installing.html):
 weasyprint>=69.0
 
+# Needed for Assignment 4's statistical analysis and dashboard build:
+scipy>=1.11
+statsmodels>=0.14
+plotly>=5.20
+
 # Optional, only needed if you extend the project (e.g. pandas-based
-# exploration notebooks, or Assignment 4's dashboard/stats work):
+# exploration notebooks):
 pandas>=2.0

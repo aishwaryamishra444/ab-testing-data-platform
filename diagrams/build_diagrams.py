@@ -361,6 +361,37 @@ def build_reliability_diagram():
     return svg, W, H
 
 
+# =====================================================================
+# DIAGRAM 5: Analysis Pipeline Flow (Assignment 4)
+# =====================================================================
+def build_analysis_pipeline_diagram():
+    W, H = 980, 560
+    svg = svg_header(W, H)
+    svg += f'<text x="{W/2}" y="36" text-anchor="middle" font-size="19" font-weight="700" fill="{NAVY}">Analysis Pipeline: Warehouse to Dashboard</text>\n'
+    svg += f'<text x="{W/2}" y="57" text-anchor="middle" font-size="11" fill="{GREY}" font-style="italic">Assignment 4 \u2014 statistical testing, KPI computation, dashboard generation</text>\n'
+
+    cx = W / 2
+    svg += box(cx-170, 80, 340, 46, "ab_test.db", "mart_kpi_by_group, mart_guardrails_by_group,\\nmart_step_dropoff, mart_daily_funnel (Assignment 2)", fill=NAVY, sub_size=8)
+    svg += arrow(cx, 126, cx, 160)
+
+    svg += box(cx-190, 160, 380, 46, "stats_analysis.py", "SRM check, two-proportion z-tests, power recheck,\\nguardrail regression flags, recommendation synthesis", fill=MIDBLUE, sub_size=8)
+    svg += arrow(cx, 206, cx, 240)
+
+    svg += box(cx-110, 240, 220, 40, "analysis/results.json", fill=NAVY, title_size=11)
+    svg += arrow(cx, 280, cx, 314)
+
+    svg += box(cx-190, 314, 380, 40, "dashboard/data_export.py", "merges mart tables + results.json", fill=MIDBLUE, sub_size=9)
+    svg += arrow(cx, 354, cx, 388)
+
+    svg += box(cx-160, 388, 320, 40, "dashboard_data.json", fill=NAVY, title_size=11)
+    svg += arrow(cx, 428, cx, 462)
+
+    svg += box(cx-190, 462, 380, 46, "build_dashboard.py", "renders dashboard.html \u2014 self-contained,\\nPlotly.js embedded inline, opens offline", fill="#2f6b3f", sub_size=8.5)
+
+    svg += "</svg>"
+    return svg, W, H
+
+
 if __name__ == "__main__":
     import cairosvg
 
@@ -369,6 +400,7 @@ if __name__ == "__main__":
         (build_erd_diagram, "star_schema_erd.svg"),
         (build_journey_diagram, "experiment_flow.svg"),
         (build_reliability_diagram, "pipeline_reliability_flow.svg"),
+        (build_analysis_pipeline_diagram, "analysis_pipeline_flow.svg"),
     ]:
         svg, w, h = build_fn()
         out_path = HERE / filename

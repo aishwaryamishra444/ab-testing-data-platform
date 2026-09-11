@@ -1,0 +1,1177 @@
+{
+  "kpi_by_group": [
+    {
+      "test_group": "A",
+      "users_started": 2000,
+      "users_completed": 1148,
+      "onboarding_completion_rate": 0.574,
+      "users_activated": 801,
+      "activation_rate": 0.6977,
+      "users_purchased": 49,
+      "paid_conversion_rate": 0.0612,
+      "avg_time_to_first_lesson_seconds": 1584.4,
+      "day1_return_rate": 0.5584,
+      "day7_return_rate": 0.4268,
+      "day30_return_rate": 0.3615
+    },
+    {
+      "test_group": "B",
+      "users_started": 2000,
+      "users_completed": 1460,
+      "onboarding_completion_rate": 0.73,
+      "users_activated": 923,
+      "activation_rate": 0.6322,
+      "users_purchased": 53,
+      "paid_conversion_rate": 0.0574,
+      "avg_time_to_first_lesson_seconds": 1507.0,
+      "day1_return_rate": 0.5438,
+      "day7_return_rate": 0.4014,
+      "day30_return_rate": 0.3425
+    },
+    {
+      "test_group": "C",
+      "users_started": 2000,
+      "users_completed": 1630,
+      "onboarding_completion_rate": 0.815,
+      "users_activated": 1070,
+      "activation_rate": 0.6564,
+      "users_purchased": 67,
+      "paid_conversion_rate": 0.0626,
+      "avg_time_to_first_lesson_seconds": 1475.6,
+      "day1_return_rate": 0.5552,
+      "day7_return_rate": 0.4209,
+      "day30_return_rate": 0.2896
+    }
+  ],
+  "guardrails_by_group": [
+    {
+      "test_group": "A",
+      "avg_lesson_relevance_score": 3.983,
+      "refund_rate": 0.0,
+      "cancellation_rate": 0.0816,
+      "support_ticket_rate": 0.009,
+      "notification_optin_rate": 0.5281
+    },
+    {
+      "test_group": "B",
+      "avg_lesson_relevance_score": 3.861,
+      "refund_rate": 0.0377,
+      "cancellation_rate": 0.0566,
+      "support_ticket_rate": 0.012,
+      "notification_optin_rate": 0.5117
+    },
+    {
+      "test_group": "C",
+      "avg_lesson_relevance_score": 3.436,
+      "refund_rate": 0.0,
+      "cancellation_rate": 0.0448,
+      "support_ticket_rate": 0.022,
+      "notification_optin_rate": 0.327
+    }
+  ],
+  "step_dropoff": [
+    {
+      "test_group": "A",
+      "step_number": 1,
+      "step_name": "welcome_screen",
+      "step_bucket": "nice_to_have",
+      "users_viewed": 2000,
+      "users_completed": 1944,
+      "users_abandoned": 56,
+      "step_abandon_rate": 0.028
+    },
+    {
+      "test_group": "A",
+      "step_number": 2,
+      "step_name": "select_learning_goal",
+      "step_bucket": "can_wait",
+      "users_viewed": 1944,
+      "users_completed": 1882,
+      "users_abandoned": 62,
+      "step_abandon_rate": 0.0319
+    },
+    {
+      "test_group": "A",
+      "step_number": 3,
+      "step_name": "select_native_language",
+      "step_bucket": "must_have",
+      "users_viewed": 1882,
+      "users_completed": 1849,
+      "users_abandoned": 33,
+      "step_abandon_rate": 0.0175
+    },
+    {
+      "test_group": "A",
+      "step_number": 4,
+      "step_name": "account_creation_email",
+      "step_bucket": "must_have",
+      "users_viewed": 1849,
+      "users_completed": 1741,
+      "users_abandoned": 108,
+      "step_abandon_rate": 0.0584
+    },
+    {
+      "test_group": "A",
+      "step_number": 5,
+      "step_name": "account_creation_password",
+      "step_bucket": "must_have",
+      "users_viewed": 1741,
+      "users_completed": 1668,
+      "users_abandoned": 73,
+      "step_abandon_rate": 0.0419
+    },
+    {
+      "test_group": "A",
+      "step_number": 6,
+      "step_name": "level_assessment_intro",
+      "step_bucket": "nice_to_have",
+      "users_viewed": 1668,
+      "users_completed": 1611,
+      "users_abandoned": 57,
+      "step_abandon_rate": 0.0342
+    },
+    {
+      "test_group": "A",
+      "step_number": 7,
+      "step_name": "level_assessment_quiz",
+      "step_bucket": "must_have",
+      "users_viewed": 1611,
+      "users_completed": 1493,
+      "users_abandoned": 118,
+      "step_abandon_rate": 0.0732
+    },
+    {
+      "test_group": "A",
+      "step_number": 8,
+      "step_name": "personalization_interests",
+      "step_bucket": "can_wait",
+      "users_viewed": 1493,
+      "users_completed": 1418,
+      "users_abandoned": 75,
+      "step_abandon_rate": 0.0502
+    },
+    {
+      "test_group": "A",
+      "step_number": 9,
+      "step_name": "personalization_schedule",
+      "step_bucket": "can_wait",
+      "users_viewed": 1418,
+      "users_completed": 1353,
+      "users_abandoned": 65,
+      "step_abandon_rate": 0.0458
+    },
+    {
+      "test_group": "A",
+      "step_number": 10,
+      "step_name": "notification_permission",
+      "step_bucket": "can_wait",
+      "users_viewed": 1353,
+      "users_completed": 1280,
+      "users_abandoned": 73,
+      "step_abandon_rate": 0.054
+    },
+    {
+      "test_group": "A",
+      "step_number": 11,
+      "step_name": "referral_source_survey",
+      "step_bucket": "nice_to_have",
+      "users_viewed": 1280,
+      "users_completed": 1234,
+      "users_abandoned": 46,
+      "step_abandon_rate": 0.0359
+    },
+    {
+      "test_group": "A",
+      "step_number": 12,
+      "step_name": "tutorial_walkthrough",
+      "step_bucket": "nice_to_have",
+      "users_viewed": 1234,
+      "users_completed": 1186,
+      "users_abandoned": 48,
+      "step_abandon_rate": 0.0389
+    },
+    {
+      "test_group": "A",
+      "step_number": 13,
+      "step_name": "terms_and_privacy_confirmation",
+      "step_bucket": "must_have",
+      "users_viewed": 1186,
+      "users_completed": 1148,
+      "users_abandoned": 38,
+      "step_abandon_rate": 0.032
+    },
+    {
+      "test_group": "B",
+      "step_number": 1,
+      "step_name": "select_native_language",
+      "step_bucket": "must_have",
+      "users_viewed": 2000,
+      "users_completed": 1960,
+      "users_abandoned": 40,
+      "step_abandon_rate": 0.02
+    },
+    {
+      "test_group": "B",
+      "step_number": 2,
+      "step_name": "account_creation_email",
+      "step_bucket": "must_have",
+      "users_viewed": 1960,
+      "users_completed": 1856,
+      "users_abandoned": 104,
+      "step_abandon_rate": 0.0531
+    },
+    {
+      "test_group": "B",
+      "step_number": 3,
+      "step_name": "account_creation_password",
+      "step_bucket": "must_have",
+      "users_viewed": 1856,
+      "users_completed": 1764,
+      "users_abandoned": 92,
+      "step_abandon_rate": 0.0496
+    },
+    {
+      "test_group": "B",
+      "step_number": 4,
+      "step_name": "select_learning_goal",
+      "step_bucket": "can_wait",
+      "users_viewed": 1764,
+      "users_completed": 1707,
+      "users_abandoned": 57,
+      "step_abandon_rate": 0.0323
+    },
+    {
+      "test_group": "B",
+      "step_number": 5,
+      "step_name": "level_assessment_quiz",
+      "step_bucket": "must_have",
+      "users_viewed": 1707,
+      "users_completed": 1584,
+      "users_abandoned": 123,
+      "step_abandon_rate": 0.0721
+    },
+    {
+      "test_group": "B",
+      "step_number": 6,
+      "step_name": "notification_permission",
+      "step_bucket": "can_wait",
+      "users_viewed": 1584,
+      "users_completed": 1495,
+      "users_abandoned": 89,
+      "step_abandon_rate": 0.0562
+    },
+    {
+      "test_group": "B",
+      "step_number": 7,
+      "step_name": "terms_and_privacy_confirmation",
+      "step_bucket": "must_have",
+      "users_viewed": 1495,
+      "users_completed": 1460,
+      "users_abandoned": 35,
+      "step_abandon_rate": 0.0234
+    },
+    {
+      "test_group": "C",
+      "step_number": 1,
+      "step_name": "select_native_language",
+      "step_bucket": "must_have",
+      "users_viewed": 2000,
+      "users_completed": 1970,
+      "users_abandoned": 30,
+      "step_abandon_rate": 0.015
+    },
+    {
+      "test_group": "C",
+      "step_number": 2,
+      "step_name": "account_creation_email",
+      "step_bucket": "must_have",
+      "users_viewed": 1970,
+      "users_completed": 1858,
+      "users_abandoned": 112,
+      "step_abandon_rate": 0.0569
+    },
+    {
+      "test_group": "C",
+      "step_number": 3,
+      "step_name": "account_creation_password",
+      "step_bucket": "must_have",
+      "users_viewed": 1858,
+      "users_completed": 1780,
+      "users_abandoned": 78,
+      "step_abandon_rate": 0.042
+    },
+    {
+      "test_group": "C",
+      "step_number": 4,
+      "step_name": "level_assessment_quiz",
+      "step_bucket": "must_have",
+      "users_viewed": 1780,
+      "users_completed": 1659,
+      "users_abandoned": 121,
+      "step_abandon_rate": 0.068
+    },
+    {
+      "test_group": "C",
+      "step_number": 5,
+      "step_name": "terms_and_privacy_confirmation",
+      "step_bucket": "must_have",
+      "users_viewed": 1659,
+      "users_completed": 1630,
+      "users_abandoned": 29,
+      "step_abandon_rate": 0.0175
+    }
+  ],
+  "daily_funnel": [
+    {
+      "install_date": "2026-06-15",
+      "test_group": "A",
+      "users_started": 65,
+      "users_completed": 33,
+      "onboarding_completion_rate": 0.5077
+    },
+    {
+      "install_date": "2026-06-15",
+      "test_group": "B",
+      "users_started": 64,
+      "users_completed": 44,
+      "onboarding_completion_rate": 0.6875
+    },
+    {
+      "install_date": "2026-06-15",
+      "test_group": "C",
+      "users_started": 56,
+      "users_completed": 46,
+      "onboarding_completion_rate": 0.8214
+    },
+    {
+      "install_date": "2026-06-16",
+      "test_group": "A",
+      "users_started": 58,
+      "users_completed": 32,
+      "onboarding_completion_rate": 0.5517
+    },
+    {
+      "install_date": "2026-06-16",
+      "test_group": "B",
+      "users_started": 72,
+      "users_completed": 57,
+      "onboarding_completion_rate": 0.7917
+    },
+    {
+      "install_date": "2026-06-16",
+      "test_group": "C",
+      "users_started": 70,
+      "users_completed": 54,
+      "onboarding_completion_rate": 0.7714
+    },
+    {
+      "install_date": "2026-06-17",
+      "test_group": "A",
+      "users_started": 70,
+      "users_completed": 40,
+      "onboarding_completion_rate": 0.5714
+    },
+    {
+      "install_date": "2026-06-17",
+      "test_group": "B",
+      "users_started": 69,
+      "users_completed": 50,
+      "onboarding_completion_rate": 0.7246
+    },
+    {
+      "install_date": "2026-06-17",
+      "test_group": "C",
+      "users_started": 59,
+      "users_completed": 48,
+      "onboarding_completion_rate": 0.8136
+    },
+    {
+      "install_date": "2026-06-18",
+      "test_group": "A",
+      "users_started": 80,
+      "users_completed": 45,
+      "onboarding_completion_rate": 0.5625
+    },
+    {
+      "install_date": "2026-06-18",
+      "test_group": "B",
+      "users_started": 64,
+      "users_completed": 45,
+      "onboarding_completion_rate": 0.7031
+    },
+    {
+      "install_date": "2026-06-18",
+      "test_group": "C",
+      "users_started": 68,
+      "users_completed": 49,
+      "onboarding_completion_rate": 0.7206
+    },
+    {
+      "install_date": "2026-06-19",
+      "test_group": "A",
+      "users_started": 57,
+      "users_completed": 25,
+      "onboarding_completion_rate": 0.4386
+    },
+    {
+      "install_date": "2026-06-19",
+      "test_group": "B",
+      "users_started": 71,
+      "users_completed": 50,
+      "onboarding_completion_rate": 0.7042
+    },
+    {
+      "install_date": "2026-06-19",
+      "test_group": "C",
+      "users_started": 59,
+      "users_completed": 51,
+      "onboarding_completion_rate": 0.8644
+    },
+    {
+      "install_date": "2026-06-20",
+      "test_group": "A",
+      "users_started": 64,
+      "users_completed": 43,
+      "onboarding_completion_rate": 0.6719
+    },
+    {
+      "install_date": "2026-06-20",
+      "test_group": "B",
+      "users_started": 75,
+      "users_completed": 48,
+      "onboarding_completion_rate": 0.64
+    },
+    {
+      "install_date": "2026-06-20",
+      "test_group": "C",
+      "users_started": 57,
+      "users_completed": 45,
+      "onboarding_completion_rate": 0.7895
+    },
+    {
+      "install_date": "2026-06-21",
+      "test_group": "A",
+      "users_started": 72,
+      "users_completed": 42,
+      "onboarding_completion_rate": 0.5833
+    },
+    {
+      "install_date": "2026-06-21",
+      "test_group": "B",
+      "users_started": 57,
+      "users_completed": 40,
+      "onboarding_completion_rate": 0.7018
+    },
+    {
+      "install_date": "2026-06-21",
+      "test_group": "C",
+      "users_started": 58,
+      "users_completed": 49,
+      "onboarding_completion_rate": 0.8448
+    },
+    {
+      "install_date": "2026-06-22",
+      "test_group": "A",
+      "users_started": 67,
+      "users_completed": 41,
+      "onboarding_completion_rate": 0.6119
+    },
+    {
+      "install_date": "2026-06-22",
+      "test_group": "B",
+      "users_started": 66,
+      "users_completed": 50,
+      "onboarding_completion_rate": 0.7576
+    },
+    {
+      "install_date": "2026-06-22",
+      "test_group": "C",
+      "users_started": 84,
+      "users_completed": 67,
+      "onboarding_completion_rate": 0.7976
+    },
+    {
+      "install_date": "2026-06-23",
+      "test_group": "A",
+      "users_started": 61,
+      "users_completed": 39,
+      "onboarding_completion_rate": 0.6393
+    },
+    {
+      "install_date": "2026-06-23",
+      "test_group": "B",
+      "users_started": 66,
+      "users_completed": 49,
+      "onboarding_completion_rate": 0.7424
+    },
+    {
+      "install_date": "2026-06-23",
+      "test_group": "C",
+      "users_started": 67,
+      "users_completed": 53,
+      "onboarding_completion_rate": 0.791
+    },
+    {
+      "install_date": "2026-06-24",
+      "test_group": "A",
+      "users_started": 70,
+      "users_completed": 44,
+      "onboarding_completion_rate": 0.6286
+    },
+    {
+      "install_date": "2026-06-24",
+      "test_group": "B",
+      "users_started": 85,
+      "users_completed": 61,
+      "onboarding_completion_rate": 0.7176
+    },
+    {
+      "install_date": "2026-06-24",
+      "test_group": "C",
+      "users_started": 69,
+      "users_completed": 58,
+      "onboarding_completion_rate": 0.8406
+    },
+    {
+      "install_date": "2026-06-25",
+      "test_group": "A",
+      "users_started": 69,
+      "users_completed": 40,
+      "onboarding_completion_rate": 0.5797
+    },
+    {
+      "install_date": "2026-06-25",
+      "test_group": "B",
+      "users_started": 62,
+      "users_completed": 47,
+      "onboarding_completion_rate": 0.7581
+    },
+    {
+      "install_date": "2026-06-25",
+      "test_group": "C",
+      "users_started": 74,
+      "users_completed": 63,
+      "onboarding_completion_rate": 0.8514
+    },
+    {
+      "install_date": "2026-06-26",
+      "test_group": "A",
+      "users_started": 62,
+      "users_completed": 30,
+      "onboarding_completion_rate": 0.4839
+    },
+    {
+      "install_date": "2026-06-26",
+      "test_group": "B",
+      "users_started": 70,
+      "users_completed": 51,
+      "onboarding_completion_rate": 0.7286
+    },
+    {
+      "install_date": "2026-06-26",
+      "test_group": "C",
+      "users_started": 74,
+      "users_completed": 59,
+      "onboarding_completion_rate": 0.7973
+    },
+    {
+      "install_date": "2026-06-27",
+      "test_group": "A",
+      "users_started": 64,
+      "users_completed": 38,
+      "onboarding_completion_rate": 0.5938
+    },
+    {
+      "install_date": "2026-06-27",
+      "test_group": "B",
+      "users_started": 65,
+      "users_completed": 47,
+      "onboarding_completion_rate": 0.7231
+    },
+    {
+      "install_date": "2026-06-27",
+      "test_group": "C",
+      "users_started": 64,
+      "users_completed": 47,
+      "onboarding_completion_rate": 0.7344
+    },
+    {
+      "install_date": "2026-06-28",
+      "test_group": "A",
+      "users_started": 60,
+      "users_completed": 41,
+      "onboarding_completion_rate": 0.6833
+    },
+    {
+      "install_date": "2026-06-28",
+      "test_group": "B",
+      "users_started": 81,
+      "users_completed": 59,
+      "onboarding_completion_rate": 0.7284
+    },
+    {
+      "install_date": "2026-06-28",
+      "test_group": "C",
+      "users_started": 74,
+      "users_completed": 61,
+      "onboarding_completion_rate": 0.8243
+    },
+    {
+      "install_date": "2026-06-29",
+      "test_group": "A",
+      "users_started": 61,
+      "users_completed": 39,
+      "onboarding_completion_rate": 0.6393
+    },
+    {
+      "install_date": "2026-06-29",
+      "test_group": "B",
+      "users_started": 71,
+      "users_completed": 58,
+      "onboarding_completion_rate": 0.8169
+    },
+    {
+      "install_date": "2026-06-29",
+      "test_group": "C",
+      "users_started": 58,
+      "users_completed": 47,
+      "onboarding_completion_rate": 0.8103
+    },
+    {
+      "install_date": "2026-06-30",
+      "test_group": "A",
+      "users_started": 79,
+      "users_completed": 51,
+      "onboarding_completion_rate": 0.6456
+    },
+    {
+      "install_date": "2026-06-30",
+      "test_group": "B",
+      "users_started": 62,
+      "users_completed": 52,
+      "onboarding_completion_rate": 0.8387
+    },
+    {
+      "install_date": "2026-06-30",
+      "test_group": "C",
+      "users_started": 52,
+      "users_completed": 45,
+      "onboarding_completion_rate": 0.8654
+    },
+    {
+      "install_date": "2026-07-01",
+      "test_group": "A",
+      "users_started": 60,
+      "users_completed": 32,
+      "onboarding_completion_rate": 0.5333
+    },
+    {
+      "install_date": "2026-07-01",
+      "test_group": "B",
+      "users_started": 76,
+      "users_completed": 55,
+      "onboarding_completion_rate": 0.7237
+    },
+    {
+      "install_date": "2026-07-01",
+      "test_group": "C",
+      "users_started": 59,
+      "users_completed": 43,
+      "onboarding_completion_rate": 0.7288
+    },
+    {
+      "install_date": "2026-07-02",
+      "test_group": "A",
+      "users_started": 61,
+      "users_completed": 27,
+      "onboarding_completion_rate": 0.4426
+    },
+    {
+      "install_date": "2026-07-02",
+      "test_group": "B",
+      "users_started": 54,
+      "users_completed": 38,
+      "onboarding_completion_rate": 0.7037
+    },
+    {
+      "install_date": "2026-07-02",
+      "test_group": "C",
+      "users_started": 78,
+      "users_completed": 67,
+      "onboarding_completion_rate": 0.859
+    },
+    {
+      "install_date": "2026-07-03",
+      "test_group": "A",
+      "users_started": 73,
+      "users_completed": 42,
+      "onboarding_completion_rate": 0.5753
+    },
+    {
+      "install_date": "2026-07-03",
+      "test_group": "B",
+      "users_started": 67,
+      "users_completed": 43,
+      "onboarding_completion_rate": 0.6418
+    },
+    {
+      "install_date": "2026-07-03",
+      "test_group": "C",
+      "users_started": 62,
+      "users_completed": 51,
+      "onboarding_completion_rate": 0.8226
+    },
+    {
+      "install_date": "2026-07-04",
+      "test_group": "A",
+      "users_started": 50,
+      "users_completed": 28,
+      "onboarding_completion_rate": 0.56
+    },
+    {
+      "install_date": "2026-07-04",
+      "test_group": "B",
+      "users_started": 71,
+      "users_completed": 47,
+      "onboarding_completion_rate": 0.662
+    },
+    {
+      "install_date": "2026-07-04",
+      "test_group": "C",
+      "users_started": 74,
+      "users_completed": 67,
+      "onboarding_completion_rate": 0.9054
+    },
+    {
+      "install_date": "2026-07-05",
+      "test_group": "A",
+      "users_started": 71,
+      "users_completed": 36,
+      "onboarding_completion_rate": 0.507
+    },
+    {
+      "install_date": "2026-07-05",
+      "test_group": "B",
+      "users_started": 55,
+      "users_completed": 38,
+      "onboarding_completion_rate": 0.6909
+    },
+    {
+      "install_date": "2026-07-05",
+      "test_group": "C",
+      "users_started": 53,
+      "users_completed": 42,
+      "onboarding_completion_rate": 0.7925
+    },
+    {
+      "install_date": "2026-07-06",
+      "test_group": "A",
+      "users_started": 59,
+      "users_completed": 32,
+      "onboarding_completion_rate": 0.5424
+    },
+    {
+      "install_date": "2026-07-06",
+      "test_group": "B",
+      "users_started": 73,
+      "users_completed": 49,
+      "onboarding_completion_rate": 0.6712
+    },
+    {
+      "install_date": "2026-07-06",
+      "test_group": "C",
+      "users_started": 70,
+      "users_completed": 60,
+      "onboarding_completion_rate": 0.8571
+    },
+    {
+      "install_date": "2026-07-07",
+      "test_group": "A",
+      "users_started": 68,
+      "users_completed": 40,
+      "onboarding_completion_rate": 0.5882
+    },
+    {
+      "install_date": "2026-07-07",
+      "test_group": "B",
+      "users_started": 63,
+      "users_completed": 52,
+      "onboarding_completion_rate": 0.8254
+    },
+    {
+      "install_date": "2026-07-07",
+      "test_group": "C",
+      "users_started": 62,
+      "users_completed": 49,
+      "onboarding_completion_rate": 0.7903
+    },
+    {
+      "install_date": "2026-07-08",
+      "test_group": "A",
+      "users_started": 77,
+      "users_completed": 40,
+      "onboarding_completion_rate": 0.5195
+    },
+    {
+      "install_date": "2026-07-08",
+      "test_group": "B",
+      "users_started": 69,
+      "users_completed": 50,
+      "onboarding_completion_rate": 0.7246
+    },
+    {
+      "install_date": "2026-07-08",
+      "test_group": "C",
+      "users_started": 69,
+      "users_completed": 55,
+      "onboarding_completion_rate": 0.7971
+    },
+    {
+      "install_date": "2026-07-09",
+      "test_group": "A",
+      "users_started": 71,
+      "users_completed": 43,
+      "onboarding_completion_rate": 0.6056
+    },
+    {
+      "install_date": "2026-07-09",
+      "test_group": "B",
+      "users_started": 57,
+      "users_completed": 36,
+      "onboarding_completion_rate": 0.6316
+    },
+    {
+      "install_date": "2026-07-09",
+      "test_group": "C",
+      "users_started": 75,
+      "users_completed": 58,
+      "onboarding_completion_rate": 0.7733
+    },
+    {
+      "install_date": "2026-07-10",
+      "test_group": "A",
+      "users_started": 72,
+      "users_completed": 40,
+      "onboarding_completion_rate": 0.5556
+    },
+    {
+      "install_date": "2026-07-10",
+      "test_group": "B",
+      "users_started": 79,
+      "users_completed": 61,
+      "onboarding_completion_rate": 0.7722
+    },
+    {
+      "install_date": "2026-07-10",
+      "test_group": "C",
+      "users_started": 74,
+      "users_completed": 59,
+      "onboarding_completion_rate": 0.7973
+    },
+    {
+      "install_date": "2026-07-11",
+      "test_group": "A",
+      "users_started": 67,
+      "users_completed": 39,
+      "onboarding_completion_rate": 0.5821
+    },
+    {
+      "install_date": "2026-07-11",
+      "test_group": "B",
+      "users_started": 59,
+      "users_completed": 45,
+      "onboarding_completion_rate": 0.7627
+    },
+    {
+      "install_date": "2026-07-11",
+      "test_group": "C",
+      "users_started": 84,
+      "users_completed": 70,
+      "onboarding_completion_rate": 0.8333
+    },
+    {
+      "install_date": "2026-07-12",
+      "test_group": "A",
+      "users_started": 73,
+      "users_completed": 41,
+      "onboarding_completion_rate": 0.5616
+    },
+    {
+      "install_date": "2026-07-12",
+      "test_group": "B",
+      "users_started": 59,
+      "users_completed": 42,
+      "onboarding_completion_rate": 0.7119
+    },
+    {
+      "install_date": "2026-07-12",
+      "test_group": "C",
+      "users_started": 68,
+      "users_completed": 55,
+      "onboarding_completion_rate": 0.8088
+    },
+    {
+      "install_date": "2026-07-13",
+      "test_group": "A",
+      "users_started": 68,
+      "users_completed": 40,
+      "onboarding_completion_rate": 0.5882
+    },
+    {
+      "install_date": "2026-07-13",
+      "test_group": "B",
+      "users_started": 62,
+      "users_completed": 50,
+      "onboarding_completion_rate": 0.8065
+    },
+    {
+      "install_date": "2026-07-13",
+      "test_group": "C",
+      "users_started": 69,
+      "users_completed": 61,
+      "onboarding_completion_rate": 0.8841
+    },
+    {
+      "install_date": "2026-07-14",
+      "test_group": "A",
+      "users_started": 71,
+      "users_completed": 45,
+      "onboarding_completion_rate": 0.6338
+    },
+    {
+      "install_date": "2026-07-14",
+      "test_group": "B",
+      "users_started": 56,
+      "users_completed": 46,
+      "onboarding_completion_rate": 0.8214
+    },
+    {
+      "install_date": "2026-07-14",
+      "test_group": "C",
+      "users_started": 60,
+      "users_completed": 51,
+      "onboarding_completion_rate": 0.85
+    }
+  ],
+  "stats": {
+    "srm_check": {
+      "observed": {
+        "A": 2000,
+        "B": 2000,
+        "C": 2000
+      },
+      "expected_per_arm": 2000.0,
+      "chi2_statistic": 0.0,
+      "p_value": 1.0,
+      "passes": true,
+      "interpretation": "No Sample Ratio Mismatch detected -- observed allocation is consistent with the intended 33/33/33 split. Downstream comparisons can be trusted."
+    },
+    "primary_metric": {
+      "per_arm": {
+        "A": {
+          "label": "Control (13 steps)",
+          "users_started": 2000,
+          "users_completed": 1148,
+          "completion_rate": 0.574,
+          "ci_95_low": 0.5522,
+          "ci_95_high": 0.5955
+        },
+        "B": {
+          "label": "Medium (7 steps)",
+          "users_started": 2000,
+          "users_completed": 1460,
+          "completion_rate": 0.73,
+          "ci_95_low": 0.7101,
+          "ci_95_high": 0.749
+        },
+        "C": {
+          "label": "Short (5 steps)",
+          "users_started": 2000,
+          "users_completed": 1630,
+          "completion_rate": 0.815,
+          "ci_95_low": 0.7974,
+          "ci_95_high": 0.8314
+        }
+      },
+      "pairwise_tests": [
+        {
+          "arm_a": "A",
+          "arm_b": "B",
+          "label": "A (Control (13 steps)) vs B (Medium (7 steps))",
+          "rate_a": 0.574,
+          "rate_b": 0.73,
+          "absolute_diff": 0.156,
+          "relative_lift_pct": 27.18,
+          "diff_ci_95": [
+            0.1269,
+            0.1851
+          ],
+          "z_statistic": -10.3565,
+          "p_value": 0.0,
+          "significant_at_05": true
+        },
+        {
+          "arm_a": "A",
+          "arm_b": "C",
+          "label": "A (Control (13 steps)) vs C (Short (5 steps))",
+          "rate_a": 0.574,
+          "rate_b": 0.815,
+          "absolute_diff": 0.241,
+          "relative_lift_pct": 41.99,
+          "diff_ci_95": [
+            0.2134,
+            0.2686
+          ],
+          "z_statistic": -16.5453,
+          "p_value": 0.0,
+          "significant_at_05": true
+        },
+        {
+          "arm_a": "B",
+          "arm_b": "C",
+          "label": "B (Medium (7 steps)) vs C (Short (5 steps))",
+          "rate_a": 0.73,
+          "rate_b": 0.815,
+          "absolute_diff": 0.085,
+          "relative_lift_pct": 11.64,
+          "diff_ci_95": [
+            0.0592,
+            0.1108
+          ],
+          "z_statistic": -6.4118,
+          "p_value": 0.0,
+          "significant_at_05": true
+        }
+      ]
+    },
+    "secondary_metrics": {
+      "activation_rate": {
+        "A": 0.6977,
+        "B": 0.6322,
+        "C": 0.6564
+      },
+      "day1_return_rate": {
+        "A": 0.5584,
+        "B": 0.5438,
+        "C": 0.5552
+      },
+      "day7_return_rate": {
+        "A": 0.4268,
+        "B": 0.4014,
+        "C": 0.4209
+      },
+      "day30_return_rate": {
+        "A": 0.3615,
+        "B": 0.3425,
+        "C": 0.2896
+      },
+      "paid_conversion_rate": {
+        "A": 0.0612,
+        "B": 0.0574,
+        "C": 0.0626
+      },
+      "avg_time_to_first_lesson_seconds": {
+        "A": 1584.4,
+        "B": 1507.0,
+        "C": 1475.6
+      }
+    },
+    "guardrail_metrics": {
+      "by_arm": {
+        "avg_lesson_relevance_score": {
+          "A": 3.983,
+          "B": 3.861,
+          "C": 3.436
+        },
+        "refund_rate": {
+          "A": 0.0,
+          "B": 0.0377,
+          "C": 0.0
+        },
+        "cancellation_rate": {
+          "A": 0.0816,
+          "B": 0.0566,
+          "C": 0.0448
+        },
+        "support_ticket_rate": {
+          "A": 0.009,
+          "B": 0.012,
+          "C": 0.022
+        },
+        "notification_optin_rate": {
+          "A": 0.5281,
+          "B": 0.5117,
+          "C": 0.327
+        }
+      },
+      "regression_flags_vs_control": [
+        "Lesson relevance score is lower in C (3.44) than A (3.98)",
+        "Support-ticket rate is higher in C (2.2%) than A (0.9%)",
+        "Notification opt-in is lower in C (32.7%) than A (52.8%)"
+      ]
+    },
+    "power_recheck": {
+      "n_per_arm_achieved": 2000,
+      "baseline_completion_rate": 0.574,
+      "alpha": 0.05,
+      "target_power": 0.8,
+      "achievable_mde_pp_at_80pct_power": 4.35,
+      "interpretation": "With 2000 users per arm, this experiment could reliably detect a completion-rate difference of about 4.3 percentage points at 80% power. The observed differences between arms (see primary metric results) are well above this threshold, so the primary result is not a statistically under-powered false negative risk."
+    },
+    "recommendation": {
+      "verdict": "SHIP WITH MITIGATION (Arm B, not C)",
+      "reasoning": "B significantly beats control on completion rate with no major guardrail regression. C wins by more on completion but shows 3 guardrail regressions relative to control -- ship B now; treat C as a follow-up experiment after addressing what's driving its guardrail declines.",
+      "guardrail_regression_count_C_vs_A": 3,
+      "supporting_tests": {
+        "A_vs_B": {
+          "arm_a": "A",
+          "arm_b": "B",
+          "label": "A (Control (13 steps)) vs B (Medium (7 steps))",
+          "rate_a": 0.574,
+          "rate_b": 0.73,
+          "absolute_diff": 0.156,
+          "relative_lift_pct": 27.18,
+          "diff_ci_95": [
+            0.1269,
+            0.1851
+          ],
+          "z_statistic": -10.3565,
+          "p_value": 0.0,
+          "significant_at_05": true
+        },
+        "A_vs_C": {
+          "arm_a": "A",
+          "arm_b": "C",
+          "label": "A (Control (13 steps)) vs C (Short (5 steps))",
+          "rate_a": 0.574,
+          "rate_b": 0.815,
+          "absolute_diff": 0.241,
+          "relative_lift_pct": 41.99,
+          "diff_ci_95": [
+            0.2134,
+            0.2686
+          ],
+          "z_statistic": -16.5453,
+          "p_value": 0.0,
+          "significant_at_05": true
+        },
+        "B_vs_C": {
+          "arm_a": "B",
+          "arm_b": "C",
+          "label": "B (Medium (7 steps)) vs C (Short (5 steps))",
+          "rate_a": 0.73,
+          "rate_b": 0.815,
+          "absolute_diff": 0.085,
+          "relative_lift_pct": 11.64,
+          "diff_ci_95": [
+            0.0592,
+            0.1108
+          ],
+          "z_statistic": -6.4118,
+          "p_value": 0.0,
+          "significant_at_05": true
+        }
+      }
+    }
+  }
+}

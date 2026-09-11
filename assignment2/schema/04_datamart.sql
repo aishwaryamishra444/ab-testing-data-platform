@@ -48,18 +48,25 @@ ORDER BY test_group;
 DROP TABLE IF EXISTS mart_step_dropoff;
 CREATE TABLE mart_step_dropoff AS
 SELECT
-    test_group,
-    step_number,
-    step_name,
-    step_bucket,
-    COUNT(DISTINCT CASE WHEN step_event_type = 'onboarding_step_viewed' THEN user_id END)    AS users_viewed,
-    COUNT(DISTINCT CASE WHEN step_event_type = 'onboarding_step_completed' THEN user_id END) AS users_completed,
-    COUNT(DISTINCT CASE WHEN step_event_type = 'onboarding_step_abandoned' THEN user_id END) AS users_abandoned,
-    ROUND(1.0 * COUNT(DISTINCT CASE WHEN step_event_type = 'onboarding_step_abandoned' THEN user_id END)
-        / NULLIF(COUNT(DISTINCT CASE WHEN step_event_type = 'onboarding_step_viewed' THEN user_id END), 0), 4) AS step_abandon_rate
-FROM fact_onboarding_step_events
-GROUP BY test_group, step_number, step_name, step_bucket
-ORDER BY test_group, step_number;
+    f.test_group,
+    f.step_number,
+    f.step_name,
+    ds.step_bucket,
+    COUNT(DISTINCT CASE WHEN f.step_event_type = 'onboarding_step_viewed' THEN f.user_id END)    AS users_viewed,
+    COUNT(DISTINCT CASE WHEN f.step_event_type = 'onboarding_step_completed' THEN f.user_id END) AS users_completed,
+    COUNT(DISTINCT CASE WHEN f.step_event_type = 'onboarding_step_abandoned' THEN f.user_id END) AS users_abandoned,
+    ROUND(1.0 * COUNT(DISTINCT CASE WHEN f.step_event_type = 'onboarding_step_abandoned' THEN f.user_id END)
+        / NULLIF(COUNT(DISTINCT CASE WHEN f.step_event_type = 'onboarding_step_viewed' THEN f.user_id END), 0), 4) AS step_abandon_rate
+FROM fact_onboarding_step_events f
+-- step_bucket lives on dim_step (design metadata, Section 2.3), not on the
+-- fact rows themselves: only onboarding_step_viewed events carry step_bucket
+-- in their raw properties (data_generator.py), so grouping by the fact
+-- table's own step_bucket column would silently split each step into two
+-- incomplete rows (one from _viewed, one from _completed/_abandoned).
+-- Joining to dim_step gives one reliable bucket per (test_group, step_number).
+JOIN dim_step ds ON ds.test_group = f.test_group AND ds.step_number = f.step_number
+GROUP BY f.test_group, f.step_number, f.step_name, ds.step_bucket
+ORDER BY f.test_group, f.step_number;
 
 -- ---------------- MART: DAILY FUNNEL TREND ----------------
 DROP TABLE IF EXISTS mart_daily_funnel;

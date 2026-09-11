@@ -20,7 +20,7 @@ plan into analysis-ready data.
 | [1 — Business Understanding, Event Design & Data Generation](assignment1/) | ✅ Complete | 5 |
 | [2 — Data Ingestion & Data Warehouse Modelling](assignment2/) | ✅ Complete | 5 |
 | [3 — Pipeline Automation & Data Validation](assignment3/) | ✅ Complete | 5 |
-| 4 — Analytics Dashboard & Experiment Evaluation | Not started | 5 |
+| [4 — Analytics Dashboard & Experiment Evaluation](assignment4/) | ✅ Complete | 5 |
 
 ## Repo Structure
 
@@ -60,6 +60,18 @@ ab-testing-data-platform/
     │   ├── crontab.txt                 <- real production cron entry + setup notes
     │   └── scheduler_demo.py           <- pure-Python scheduler for demo / no-cron environments
     ├── logs/                           <- pipeline.log + run_history.jsonl written here (gitignored)
+    └── README.md                       <- rubric mapping + quick start
+└── assignment4/
+    ├── 00_documentation.md             <- KPI computation, statistical methodology, guardrail interpretation, recommendation
+    ├── executive_summary.md            <- one-page presentation-style summary
+    ├── analysis/
+    │   ├── stats_analysis.py           <- SRM check, two-proportion z-tests, power recheck, recommendation synthesis
+    │   └── results.json                <- computed statistics
+    ├── dashboard/
+    │   ├── data_export.py              <- merges mart tables + results.json
+    │   ├── build_dashboard.py          <- renders the self-contained dashboard.html
+    │   └── dashboard.html              <- the deliverable -- open directly, no server needed
+    ├── evidence/                       <- dashboard screenshots embedded in the documentation
     └── README.md                       <- rubric mapping + quick start
 ```
 
@@ -103,15 +115,18 @@ platform that:
    (Assignment 2).
 3. **Runs unattended and stays trustworthy** as new data arrives —
    retrying what's worth retrying, alerting on what isn't, and leaving a
-   monitorable trail of every run (Assignment 3 — this is what's built so
-   far).
+   monitorable trail of every run (Assignment 3).
 4. **Turns into a dashboard and a statistical verdict** — is the
    completion-rate lift real, and is it worth the guardrail trade-offs?
-   (Assignment 4).
+   (Assignment 4 — this is what's built so far). **Answer: yes, the lift
+   is real (p < 0.0001, no SRM) — but ship Arm B, not Arm C, since C's
+   larger win comes with guardrail regressions B doesn't have.**
 
-See [`assignment1/README.md`](assignment1/README.md) and
-[`assignment2/README.md`](assignment2/README.md) for the detailed writeups
-and rubric mapping for each piece.
+See [`assignment1/README.md`](assignment1/README.md),
+[`assignment2/README.md`](assignment2/README.md),
+[`assignment3/README.md`](assignment3/README.md), and
+[`assignment4/README.md`](assignment4/README.md) for the detailed
+writeups and rubric mapping for each piece.
 
 ## Data Architecture — How Data Moves Through This Project
 
@@ -138,6 +153,15 @@ explicit pass/fail policy, and a monitorable history of every run. Full
 error-by-error reasoning is in
 [`assignment3/00_documentation.md`](assignment3/00_documentation.md)
 Section 8.
+
+![Analysis pipeline: warehouse to dashboard](diagrams/analysis_pipeline_flow.svg)
+
+Assignment 4 turns the warehouse into an answer: statistical testing
+(SRM check + two-proportion z-tests), KPI/guardrail computation, and a
+self-contained interactive dashboard — all built from the same mart
+tables Assignment 2 produces, with zero re-aggregation. Full statistical
+methodology and the final ship/hold recommendation are in
+[`assignment4/00_documentation.md`](assignment4/00_documentation.md).
 
 Full rationale for each design decision (why this layering, why a star
 schema, why this grain) is in

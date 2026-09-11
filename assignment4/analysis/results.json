@@ -1,0 +1,221 @@
+{
+  "srm_check": {
+    "observed": {
+      "A": 2000,
+      "B": 2000,
+      "C": 2000
+    },
+    "expected_per_arm": 2000.0,
+    "chi2_statistic": 0.0,
+    "p_value": 1.0,
+    "passes": true,
+    "interpretation": "No Sample Ratio Mismatch detected -- observed allocation is consistent with the intended 33/33/33 split. Downstream comparisons can be trusted."
+  },
+  "primary_metric": {
+    "per_arm": {
+      "A": {
+        "label": "Control (13 steps)",
+        "users_started": 2000,
+        "users_completed": 1148,
+        "completion_rate": 0.574,
+        "ci_95_low": 0.5522,
+        "ci_95_high": 0.5955
+      },
+      "B": {
+        "label": "Medium (7 steps)",
+        "users_started": 2000,
+        "users_completed": 1460,
+        "completion_rate": 0.73,
+        "ci_95_low": 0.7101,
+        "ci_95_high": 0.749
+      },
+      "C": {
+        "label": "Short (5 steps)",
+        "users_started": 2000,
+        "users_completed": 1630,
+        "completion_rate": 0.815,
+        "ci_95_low": 0.7974,
+        "ci_95_high": 0.8314
+      }
+    },
+    "pairwise_tests": [
+      {
+        "arm_a": "A",
+        "arm_b": "B",
+        "label": "A (Control (13 steps)) vs B (Medium (7 steps))",
+        "rate_a": 0.574,
+        "rate_b": 0.73,
+        "absolute_diff": 0.156,
+        "relative_lift_pct": 27.18,
+        "diff_ci_95": [
+          0.1269,
+          0.1851
+        ],
+        "z_statistic": -10.3565,
+        "p_value": 0.0,
+        "significant_at_05": true
+      },
+      {
+        "arm_a": "A",
+        "arm_b": "C",
+        "label": "A (Control (13 steps)) vs C (Short (5 steps))",
+        "rate_a": 0.574,
+        "rate_b": 0.815,
+        "absolute_diff": 0.241,
+        "relative_lift_pct": 41.99,
+        "diff_ci_95": [
+          0.2134,
+          0.2686
+        ],
+        "z_statistic": -16.5453,
+        "p_value": 0.0,
+        "significant_at_05": true
+      },
+      {
+        "arm_a": "B",
+        "arm_b": "C",
+        "label": "B (Medium (7 steps)) vs C (Short (5 steps))",
+        "rate_a": 0.73,
+        "rate_b": 0.815,
+        "absolute_diff": 0.085,
+        "relative_lift_pct": 11.64,
+        "diff_ci_95": [
+          0.0592,
+          0.1108
+        ],
+        "z_statistic": -6.4118,
+        "p_value": 0.0,
+        "significant_at_05": true
+      }
+    ]
+  },
+  "secondary_metrics": {
+    "activation_rate": {
+      "A": 0.6977,
+      "B": 0.6322,
+      "C": 0.6564
+    },
+    "day1_return_rate": {
+      "A": 0.5584,
+      "B": 0.5438,
+      "C": 0.5552
+    },
+    "day7_return_rate": {
+      "A": 0.4268,
+      "B": 0.4014,
+      "C": 0.4209
+    },
+    "day30_return_rate": {
+      "A": 0.3615,
+      "B": 0.3425,
+      "C": 0.2896
+    },
+    "paid_conversion_rate": {
+      "A": 0.0612,
+      "B": 0.0574,
+      "C": 0.0626
+    },
+    "avg_time_to_first_lesson_seconds": {
+      "A": 1584.4,
+      "B": 1507.0,
+      "C": 1475.6
+    }
+  },
+  "guardrail_metrics": {
+    "by_arm": {
+      "avg_lesson_relevance_score": {
+        "A": 3.983,
+        "B": 3.861,
+        "C": 3.436
+      },
+      "refund_rate": {
+        "A": 0.0,
+        "B": 0.0377,
+        "C": 0.0
+      },
+      "cancellation_rate": {
+        "A": 0.0816,
+        "B": 0.0566,
+        "C": 0.0448
+      },
+      "support_ticket_rate": {
+        "A": 0.009,
+        "B": 0.012,
+        "C": 0.022
+      },
+      "notification_optin_rate": {
+        "A": 0.5281,
+        "B": 0.5117,
+        "C": 0.327
+      }
+    },
+    "regression_flags_vs_control": [
+      "Lesson relevance score is lower in C (3.44) than A (3.98)",
+      "Support-ticket rate is higher in C (2.2%) than A (0.9%)",
+      "Notification opt-in is lower in C (32.7%) than A (52.8%)"
+    ]
+  },
+  "power_recheck": {
+    "n_per_arm_achieved": 2000,
+    "baseline_completion_rate": 0.574,
+    "alpha": 0.05,
+    "target_power": 0.8,
+    "achievable_mde_pp_at_80pct_power": 4.35,
+    "interpretation": "With 2000 users per arm, this experiment could reliably detect a completion-rate difference of about 4.3 percentage points at 80% power. The observed differences between arms (see primary metric results) are well above this threshold, so the primary result is not a statistically under-powered false negative risk."
+  },
+  "recommendation": {
+    "verdict": "SHIP WITH MITIGATION (Arm B, not C)",
+    "reasoning": "B significantly beats control on completion rate with no major guardrail regression. C wins by more on completion but shows 3 guardrail regressions relative to control -- ship B now; treat C as a follow-up experiment after addressing what's driving its guardrail declines.",
+    "guardrail_regression_count_C_vs_A": 3,
+    "supporting_tests": {
+      "A_vs_B": {
+        "arm_a": "A",
+        "arm_b": "B",
+        "label": "A (Control (13 steps)) vs B (Medium (7 steps))",
+        "rate_a": 0.574,
+        "rate_b": 0.73,
+        "absolute_diff": 0.156,
+        "relative_lift_pct": 27.18,
+        "diff_ci_95": [
+          0.1269,
+          0.1851
+        ],
+        "z_statistic": -10.3565,
+        "p_value": 0.0,
+        "significant_at_05": true
+      },
+      "A_vs_C": {
+        "arm_a": "A",
+        "arm_b": "C",
+        "label": "A (Control (13 steps)) vs C (Short (5 steps))",
+        "rate_a": 0.574,
+        "rate_b": 0.815,
+        "absolute_diff": 0.241,
+        "relative_lift_pct": 41.99,
+        "diff_ci_95": [
+          0.2134,
+          0.2686
+        ],
+        "z_statistic": -16.5453,
+        "p_value": 0.0,
+        "significant_at_05": true
+      },
+      "B_vs_C": {
+        "arm_a": "B",
+        "arm_b": "C",
+        "label": "B (Medium (7 steps)) vs C (Short (5 steps))",
+        "rate_a": 0.73,
+        "rate_b": 0.815,
+        "absolute_diff": 0.085,
+        "relative_lift_pct": 11.64,
+        "diff_ci_95": [
+          0.0592,
+          0.1108
+        ],
+        "z_statistic": -6.4118,
+        "p_value": 0.0,
+        "significant_at_05": true
+      }
+    }
+  }
+}
